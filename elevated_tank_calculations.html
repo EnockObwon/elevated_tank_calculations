@@ -1,1 +1,1485 @@
-PASTE_PART_1_HEREPASTE_PART_2_HEREPASTE_PART_3_HERE
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Elevated Steel Tank — Structural Calculations</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;font-size:11px;background:#999;padding:14px}
+.page{background:#fff;max-width:1000px;margin:0 auto;box-shadow:0 3px 14px rgba(0,0,0,.4)}
+
+/* ── DOCUMENT HEADER ───────────────────────────────────── */
+.doc-banner{background:#1B3A6B;color:#fff;padding:8px 14px;display:flex;justify-content:space-between;align-items:flex-start}
+.doc-banner .org-name{font-size:11px;font-weight:bold;display:block}
+.doc-banner .org-sub{font-size:9px;color:#9EC8FF;display:block;margin-top:2px}
+.doc-banner .ref-txt{font-size:9px;color:#9EC8FF;text-align:right;line-height:1.8}
+.meta-bar{width:100%;border-collapse:collapse;border:1px solid #1B3A6B}
+.meta-bar td{border:1px solid #8AAAD4;padding:3px 8px;font-size:10px;vertical-align:middle}
+.meta-bar .ml{background:#EFF3FB;color:#1B3A6B;font-weight:bold;font-size:9px;width:105px}
+.meta-bar input{border:none;background:#FFFDE7;width:100%;font-size:10px;font-family:Arial;padding:0}
+
+/* ── LEGEND ────────────────────────────────────────────── */
+.legend-bar{display:flex;gap:16px;padding:5px 12px;background:#F5F5F5;border-bottom:1px solid #ccc;font-size:9px;color:#555;flex-wrap:wrap;align-items:center}
+.li{display:flex;align-items:center;gap:4px}
+.sw{width:20px;height:12px;border:1px solid #aaa;border-radius:2px;flex-shrink:0}
+
+/* ── MAIN CALC TABLE ───────────────────────────────────── */
+.ct{width:100%;border-collapse:collapse}
+.ct th{background:#2C5F9E;color:#fff;padding:5px 8px;font-size:10px;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;border:1px solid #1B3A6B}
+.ct td{border:.5px solid #CCC;vertical-align:top;padding:3px 8px;font-size:11px}
+.REF{width:130px;font-size:9px;color:#333;font-style:italic;line-height:1.5;vertical-align:top}
+.CALC{vertical-align:top}
+.OUT{width:135px;vertical-align:middle}
+
+/* ── SECTION / SUB HEADERS ─────────────────────────────── */
+.SEC td{background:#1B3A6B;color:#fff;font-weight:bold;font-size:11px;padding:5px 10px;letter-spacing:.03em}
+.SUB td{background:#E8EAF6;font-weight:bold;font-size:10px;padding:4px 10px;text-transform:uppercase;letter-spacing:.04em;border-top:1px solid #9FA8DA;border-bottom:1px solid #9FA8DA}
+.TOTAL td{background:#BBDEFB;font-weight:bold;border-top:2px solid #1565C0}
+
+/* ── SECTION SELECTOR ROW ──────────────────────────────── */
+.SEL-OK td{background:#E8F5E9;border-top:2px solid #43A047;border-bottom:1px solid #A5D6A7}
+.SEL-FAIL td{background:#FFF3E0;border-top:2px solid #EF6C00;border-bottom:1px solid #FFCC80}
+.sec-dd{font-size:11px;padding:4px 7px;border:1.5px solid #388E3C;border-radius:3px;background:#fff;min-width:200px;cursor:pointer}
+.sec-dd.warn{border-color:#E65100;background:#FFF8F0}
+.btn-autofix{font-size:10px;font-weight:bold;padding:4px 12px;background:#E65100;color:#fff;border:none;border-radius:3px;cursor:pointer}
+.btn-autofix:hover{background:#BF360C}
+.btn-lightest{font-size:10px;padding:4px 12px;background:#1565C0;color:#fff;border:none;border-radius:3px;cursor:pointer}
+.btn-lightest:hover{background:#0D47A1}
+.warn-note{background:#FFF3E0;border-left:3px solid #EF6C00;padding:4px 8px;font-size:9px;color:#BF360C;margin:4px 0;line-height:1.5}
+.ok-note{background:#E8F5E9;border-left:3px solid #43A047;padding:3px 8px;font-size:9px;color:#1B5E20;margin:4px 0}
+
+/* ── SECTION PROPERTIES MINI-TABLE ─────────────────────── */
+.spt{font-size:9px;border-collapse:collapse;margin:5px 0;width:100%}
+.spt td{border:.5px solid #ccc;padding:2px 5px;text-align:center}
+.spt .sh{background:#BBDEFB;font-weight:bold;font-size:8.5px;color:#1B3A6B}
+
+/* ── EDITABLE INPUTS ───────────────────────────────────── */
+.inp{background:#FFFDE7;border:1px solid #F9A825;padding:1px 4px;font-size:11px;text-align:right;border-radius:2px;font-family:Arial;color:#111}
+.inp:focus{outline:2px solid #F9A825;background:#FFF8E1}
+.is{width:55px}.im{width:70px}.il{width:90px}
+
+/* ── CALC LINES ─────────────────────────────────────────── */
+.CL{line-height:1.85;display:block}
+.FM{font-family:'Courier New',monospace;font-size:10.5px;color:#111}
+.SV{font-family:'Courier New',monospace;font-size:10.5px;color:#1565C0}
+.i1{padding-left:24px}.i2{padding-left:48px}
+.BD{font-weight:bold}
+
+/* ── OUTPUT BOX ─────────────────────────────────────────── */
+.OB{background:#E3F2FD;border:1px solid #1976D2;padding:3px 6px;text-align:center;font-weight:bold;font-size:10px;line-height:1.5;margin:2px 0;border-radius:2px}
+
+/* ── CHECK ROWS ─────────────────────────────────────────── */
+.PASS td{background:#E8F5E9}
+.FAIL td{background:#FFEBEE}
+.pass-lbl{color:#1B5E20;font-weight:bold}
+.fail-lbl{color:#B71C1C;font-weight:bold}
+.tick{color:#2E7D32;font-size:14px;font-weight:bold}
+.cross{color:#C62828;font-size:14px;font-weight:bold}
+
+/* ── UTILISATION BAR ────────────────────────────────────── */
+.ubw{display:flex;align-items:center;gap:5px;margin-top:4px}
+.ubb{flex:1;height:5px;background:#ddd;border-radius:3px;overflow:hidden}
+.ubf{height:100%;border-radius:3px;transition:width .4s}
+.ubp{font-size:9px;font-family:'Courier New',monospace;min-width:32px;text-align:right;color:#555}
+
+/* ── NOTES ──────────────────────────────────────────────── */
+.NOTE{background:#FFF8E1;border-left:3px solid #FBC02D;padding:4px 8px;font-size:9px;color:#5D4037;margin:4px 0;line-height:1.5}
+
+/* ── FOOTER ─────────────────────────────────────────────── */
+.footer{background:#1B3A6B;color:#888;font-size:8px;padding:5px 14px;display:flex;justify-content:space-between}
+
+/* ── PRINT ──────────────────────────────────────────────── */
+
+/* ── TITLE PAGE ───────────────────────────────────────────────── */
+.tp{border:2px solid #1B3A6B;margin:0;background:#fff}
+
+/* ── EDITABLE BANNER INPUTS ────────────────────────────────────── */
+.tp-co-inp{display:block;background:transparent;border:none;border-bottom:1px dashed rgba(255,255,255,0.2);color:#fff;font-family:Arial,sans-serif;width:100%;padding:2px 3px;margin-bottom:2px;transition:background .15s,border-color .15s}
+.tp-co-inp:hover{border-bottom-color:rgba(255,255,255,0.55);background:rgba(255,255,255,0.04)}
+.tp-co-inp:focus{outline:none;border-bottom:1.5px solid #F9A825;background:rgba(255,255,255,0.09)}
+.tp-co-inp::placeholder{color:rgba(255,255,255,0.28);font-style:italic}
+.tp-co-name{font-size:18px;font-weight:bold;letter-spacing:.03em;margin-bottom:5px}
+.tp-co-sub{font-size:9.5px;color:#9EC8FF}.tp-co-sub:focus{color:#fff}
+.tp-edit-hint{font-size:8px;color:rgba(255,255,255,0.38);margin-top:6px;letter-spacing:.06em}
+.tp-logo{background:#1B3A6B;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px 20px}
+.tp-logo .co-name{font-size:18px;font-weight:bold;letter-spacing:.03em}
+.tp-logo .co-sub{font-size:10px;color:#9EC8FF;margin-top:3px;display:block}
+.tp-logo .tp-refs{font-size:9px;color:#9EC8FF;text-align:right;line-height:1.9}
+
+/* ── EDITABLE CENTRAL BLOCK ────────────────────────────────────── */
+.tp-inp{display:block;width:100%;background:transparent;border:none;
+  border-bottom:1px dashed #B0BEC5;font-family:Arial,sans-serif;
+  padding:3px 4px;margin-bottom:6px;transition:background .15s,border-color .15s;cursor:text}
+.tp-inp:hover{border-bottom-color:#1B3A6B;background:rgba(27,58,107,0.04)}
+.tp-inp:focus{outline:none;border-bottom:2px solid #F9A825;background:#FFFDE7;border-radius:2px}
+.tp-inp::placeholder{color:#BDBDBD;font-style:italic;font-weight:normal}
+.tp-inp-doctype{font-size:10px;font-weight:bold;letter-spacing:.14em;text-transform:uppercase;color:#1B3A6B}
+.tp-inp-proj{font-size:22px;font-weight:bold;color:#1B3A6B;line-height:1.25;margin-bottom:8px}
+.tp-inp-title{font-size:13px;color:#333}
+.tp-inp-sub{font-size:11px;color:#555;font-style:italic}
+.tp-mid-hint{font-size:8px;color:#BDBDBD;letter-spacing:.07em;margin-top:8px}
+.tp-mid{padding:32px 32px 20px;border-bottom:2px solid #1B3A6B}
+.tp-doc-type{font-size:10px;font-weight:bold;letter-spacing:.15em;text-transform:uppercase;color:#1B3A6B;margin-bottom:8px;border-bottom:1px solid #1B3A6B;padding-bottom:6px}
+.tp-proj{font-size:22px;font-weight:bold;color:#1B3A6B;margin-bottom:6px;line-height:1.3}
+.tp-title{font-size:14px;color:#333;margin-bottom:4px}
+.tp-subtitle{font-size:11px;color:#666;font-style:italic}
+.tp-meta{border-collapse:collapse;width:100%;border-top:2px solid #1B3A6B}
+.tp-meta td{border:.5px solid #8AAAD4;padding:5px 10px;font-size:10px;vertical-align:middle}
+.tp-meta .tl{background:#EFF3FB;color:#1B3A6B;font-weight:bold;font-size:9px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;width:130px}
+.tp-meta .tv input{border:none;background:#FFFDE7;width:100%;font-size:11px;font-family:Arial;padding:1px 2px}
+.tp-meta .tv input:focus{outline:1.5px solid #F9A825}
+.tp-sign{border-collapse:collapse;width:100%;border-top:2px solid #1B3A6B}
+.tp-sign td{border:.5px solid #8AAAD4;padding:5px 10px;font-size:10px;vertical-align:middle}
+.tp-sign .sl{background:#EFF3FB;color:#1B3A6B;font-weight:bold;font-size:9px;letter-spacing:.05em;text-transform:uppercase;white-space:nowrap;width:130px}
+.tp-sign .sn input{border:none;background:#FFFDE7;width:100%;font-size:11px;font-family:Arial;padding:1px 2px}
+.tp-sign .sn input:focus{outline:1.5px solid #F9A825}
+.tp-sign .sd{width:100px}
+.tp-sign .sd input{border:none;background:#FFFDE7;width:100%;font-size:11px;font-family:Arial;padding:1px 2px}
+.tp-rev-hd{background:#1B3A6B;color:#fff;font-size:10px;font-weight:bold;letter-spacing:.05em;text-transform:uppercase;padding:5px 10px;margin-top:0}
+.tp-rev{border-collapse:collapse;width:100%}
+.tp-rev th{background:#2C5F9E;color:#fff;font-size:9px;padding:4px 8px;text-align:left;border:.5px solid #1B3A6B;font-weight:bold;text-transform:uppercase;letter-spacing:.04em}
+.tp-rev td{border:.5px solid #8AAAD4;padding:3px 6px;font-size:10px;vertical-align:middle}
+.tp-rev td input{border:none;background:#FFFDE7;width:100%;font-size:10px;font-family:Arial;padding:1px}
+.tp-rev td input:focus{outline:1.5px solid #F9A825}
+.tp-rev .rc{width:40px;text-align:center}
+.tp-rev .rd{width:90px}
+.tp-rev .ra{width:80px}
+.tp-divider{border:none;border-top:3px dashed #aaa;margin:18px 0 12px;clear:both}
+.tp-calc-label{text-align:center;font-size:9px;color:#888;letter-spacing:.1em;text-transform:uppercase;margin:4px 0 10px;font-style:italic}
+.btn-tp{font-size:10px;padding:4px 12px;background:#1B3A6B;color:#fff;border:none;border-radius:3px;cursor:pointer;margin:0 4px}
+.btn-tp:hover{background:#2C5F9E}
+.tp-wrap{margin-bottom:0}
+@media print{body{background:#fff;padding:0}.page{box-shadow:none}
+  .legend-bar,.btn-autofix,.btn-lightest,.btn-tp{display:none}
+  .tp-divider,.tp-calc-label{display:none}
+  .inp{border:none;background:#FFFDE7}
+  .tp-meta td input,.tp-sign td input,.tp-rev td input{border:none;background:#FFFDE7}
+  .tp-mid,.tp-meta,.tp-sign,.tp-rev{page-break-inside:avoid}
+  .tp{page-break-after:always}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ════ TITLE PAGE ════════════════════════════════════════════ -->
+<div class="tp-wrap">
+<div class="tp">
+
+  <!-- Logo / company bar -->
+  <div class="tp-logo">
+    <div style="flex:1;min-width:0;padding-right:24px">
+      <input class="tp-co-inp tp-co-name" id="co_name" value="AQUATEC ENTERPRISES LTD"
+             oninput="syncCompany()" placeholder="Company / Firm Name">
+      <input class="tp-co-inp tp-co-sub" id="co_addr1" value="Plot 2220 Portbell Road, P.O. Box 9023, Kampala, Uganda"
+             oninput="syncCompany()" placeholder="Street address, P.O. Box">
+      <input class="tp-co-inp tp-co-sub" id="co_addr2" value=""
+             oninput="syncCompany()" placeholder="City, Province / Region, Country">
+      <input class="tp-co-inp tp-co-sub" id="co_tel"   value=""
+             placeholder="Tel: +xxx xxx xxxx">
+      <input class="tp-co-inp tp-co-sub" id="co_email" value=""
+             placeholder="Email: info@yourfirm.com">
+      <input class="tp-co-inp tp-co-sub" id="co_reg"   value=""
+             placeholder="Registration No. / Professional Body membership">
+      <div class="tp-edit-hint">&#9998;&nbsp; Click any line above to edit company information</div>
+    </div>
+    <div class="tp-refs" style="flex-shrink:0">
+      EC3 EN 1993-1-1 &nbsp;&middot;&nbsp; EC2 EN 1992-1-1<br>
+      EC1 EN 1991-1-4 &nbsp;&middot;&nbsp; EC0 EN 1990
+    </div>
+  </div>
+
+  <!-- Central project block -->
+  <div class="tp-mid">
+    <input class="tp-inp tp-inp-doctype" id="tp_doctype"
+           value="Detailed Engineering Design — Structural Analysis Calculations"
+           placeholder="Document type / discipline">
+    <input class="tp-inp tp-inp-proj"  id="tp_proj_inp"
+           value="55M³ STEEL TANK ELEVATED ON 12M TOWER"
+           oninput="onProjChange(this)"
+           placeholder="Project / scheme name">
+    <input class="tp-inp tp-inp-title" id="tp_title_inp"
+           value="Elevated Rectangular Steel Tank on 4-Column Braced Tower"
+           placeholder="Document sub-title / description">
+    <input class="tp-inp tp-inp-sub"   id="tp_sub_inp"
+           value="Mboira Subcounty, Kiryandongo District — Kiryandongo, Uganda"
+           placeholder="Site location, district, country">
+    <div class="tp-mid-hint">&#9998;&nbsp; Click any line to edit</div>
+  </div>
+
+  <!-- Project metadata -->
+  <table class="tp-meta">
+
+    <tr>
+      <td class="tl">Client / Employer</td>
+      <td class="tv" colspan="3"><input id="tp_client" value="The Water Trust"></td>
+      <td class="tl">Client Contact</td>
+      <td class="tv" colspan="3"><input id="tp_client_c" value=""></td>
+    </tr>
+
+    <tr>
+      <td class="tl">Project Reference</td>
+      <td class="tv"><input id="tp_projref" value="" placeholder="e.g. WT-KYA-2026" style="width:140px"></td>
+      <td class="tl" style="width:100px">Document No.</td>
+      <td class="tv"><input id="tp_docno" value="" placeholder="e.g. AEL-STR-001" style="width:140px"></td>
+      <td class="tl">Revision</td>
+      <td class="tv"><input id="tp_rev" value="A" style="width:50px;text-align:center;font-weight:bold"></td>
+      <td class="tl">Issue Date</td>
+      <td class="tv"><input id="tp_date" value="" placeholder="DD/MM/YYYY" style="width:100px"></td>
+    </tr>
+  </table>
+
+  <!-- Signatures -->
+  <table class="tp-sign">
+    <tr>
+      <td class="sl">Prepared By</td>
+      <td class="sn"><input id="tp_prep" value="" placeholder="Name &amp; qualification"></td>
+      <td style="width:60px;background:#EFF3FB;color:#1B3A6B;font-size:9px;font-weight:bold;text-transform:uppercase">Date</td>
+      <td class="sd"><input id="tp_prep_d" value="" placeholder="DD/MM/YYYY"></td>
+      <td style="width:110px;background:#EFF3FB;color:#1B3A6B;font-size:9px;font-weight:bold;text-transform:uppercase">Signature</td>
+      <td style="background:#FAFAFA">&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="sl">Checked By</td>
+      <td class="sn"><input id="tp_chk" value="" placeholder="Name &amp; qualification"></td>
+      <td style="width:60px;background:#EFF3FB;color:#1B3A6B;font-size:9px;font-weight:bold;text-transform:uppercase">Date</td>
+      <td class="sd"><input id="tp_chk_d" value="" placeholder="DD/MM/YYYY"></td>
+      <td style="width:110px;background:#EFF3FB;color:#1B3A6B;font-size:9px;font-weight:bold;text-transform:uppercase">Signature</td>
+      <td style="background:#FAFAFA">&nbsp;</td>
+    </tr>
+    <tr>
+      <td class="sl">Approved By</td>
+      <td class="sn"><input id="tp_appr" value="" placeholder="Name &amp; qualification"></td>
+      <td style="width:60px;background:#EFF3FB;color:#1B3A6B;font-size:9px;font-weight:bold;text-transform:uppercase">Date</td>
+      <td class="sd"><input id="tp_appr_d" value="" placeholder="DD/MM/YYYY"></td>
+      <td style="width:110px;background:#EFF3FB;color:#1B3A6B;font-size:9px;font-weight:bold;text-transform:uppercase">Signature</td>
+      <td style="background:#FAFAFA">&nbsp;</td>
+    </tr>
+  </table>
+
+  <!-- Revision history -->
+  <div class="tp-rev-hd">Revision History</div>
+  <table class="tp-rev" id="rev_table">
+    <thead>
+      <tr>
+        <th class="rc">Rev</th>
+        <th class="rd">Date</th>
+        <th>Description of Revision</th>
+        <th class="ra">Prepared</th>
+        <th class="ra">Checked</th>
+        <th class="ra">Approved</th>
+      </tr>
+    </thead>
+    <tbody id="rev_body">
+      <tr>
+        <td class="rc"><input value="A" style="text-align:center;font-weight:bold"></td>
+        <td class="rd"><input placeholder="DD/MM/YYYY"></td>
+        <td><input value="First Issue" style="width:100%"></td>
+        <td class="ra"><input></td>
+        <td class="ra"><input></td>
+        <td class="ra"><input></td>
+      </tr>
+      <tr>
+        <td class="rc"><input value="B"></td>
+        <td class="rd"><input placeholder="DD/MM/YYYY"></td>
+        <td><input style="width:100%"></td>
+        <td class="ra"><input></td>
+        <td class="ra"><input></td>
+        <td class="ra"><input></td>
+      </tr>
+      <tr>
+        <td class="rc"><input value="C"></td>
+        <td class="rd"><input placeholder="DD/MM/YYYY"></td>
+        <td><input style="width:100%"></td>
+        <td class="ra"><input></td>
+        <td class="ra"><input></td>
+        <td class="ra"><input></td>
+      </tr>
+    </tbody>
+  </table>
+  <div style="padding:5px 10px;background:#f9f9f9;border-top:.5px solid #ccc">
+    <button class="btn-tp" onclick="addRevRow()">+ Add Revision Row</button>
+    <span style="font-size:9px;color:#888;margin-left:8px">All yellow fields are editable — click any cell to type</span>
+  </div>
+
+</div><!-- /tp -->
+</div><!-- /tp-wrap -->
+
+<!-- Page break between title page and calculations -->
+<hr class="tp-divider">
+<div class="tp-calc-label">&#9660; STRUCTURAL ANALYSIS CALCULATIONS &#9660;</div>
+
+<!-- Calculation sheet header (compact repeat of key info) -->
+<div class="doc-banner">
+  <div>
+    <span class="org-name" id="calc_co_name">AQUATEC ENTERPRISES LTD</span>
+    <span class="org-sub" id="calc_co_sub"></span>
+    <span class="org-sub" id="calc_proj_name">55M³ STEEL TANK ELEVATED ON 12M TOWER</span>
+    <span class="org-sub">Structural Analysis Calculations — Elevated Rectangular Steel Tank on Braced Tower</span>
+  </div>
+  <div class="ref-txt">EC3 EN 1993-1-1 &nbsp;·&nbsp; EC2 EN 1992-1-1<br>EC1 EN 1991-1-4 &nbsp;·&nbsp; EC0 EN 1990</div>
+</div>
+
+<table class="meta-bar">
+  <tr>
+    <td class="ml">Project Title</td>
+    <td colspan="5"><input id="ptitle" value="55M³ STEEL TANK ELEVATED ON 12M TOWER" style="width:100%" oninput="onProjChange(this)"></td>
+  </tr>
+  <tr>
+    <td class="ml">Date</td>
+    <td style="width:110px"><input id="pdate" value=""></td>
+    <td class="ml" style="width:80px">Prepared By</td>
+    <td style="width:100px"><input id="pprep" value=""></td>
+    <td class="ml" style="width:120px">Checked &amp; Approved By</td>
+    <td><input id="pchk" value=""></td>
+  </tr>
+</table>
+
+<div class="legend-bar">
+  <strong style="color:#333">KEY:</strong>
+  <div class="li"><div class="sw" style="background:#FFFDE7;border-color:#F9A825"></div>Yellow = edit for your project</div>
+  <div class="li"><div class="sw" style="background:#E8F5E9;border-color:#43A047"></div>Green row = section selector (all checks pass)</div>
+  <div class="li"><div class="sw" style="background:#FFF3E0;border-color:#EF6C00"></div>Orange row = section fails — click Auto-Fix</div>
+  <div class="li"><div class="sw" style="background:#E3F2FD;border-color:#1976D2"></div>Blue = key result output</div>
+  <div class="li"><div class="sw" style="background:#FFEBEE;border-color:#C62828"></div>Red = check failed</div>
+</div>
+
+<table class="ct">
+<thead>
+  <tr>
+    <th class="REF">REFERENCES</th>
+    <th class="CALC">CALCULATIONS</th>
+    <th class="OUT">OUTPUT</th>
+  </tr>
+</thead>
+<tbody id="CB"></tbody>
+</table>
+
+<div class="footer">
+  <span>Elevated Tank Structural Analysis — Interactive EC3 / EC2 Calculation Sheet</span>
+  <span>EN 1990:2002 · EN 1991-1-4:2005 · EN 1993-1-1:2005 · EN 1992-1-1:2004</span>
+</div>
+</div><!-- /page -->
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+//  SECTION DATABASES  (from published UK steel tables)
+// ═══════════════════════════════════════════════════════════════════
+// UB table: [name, h, b, tw, tf, r, A(cm²), Ixx(cm⁴), Wpl(cm³), Wel(cm³), mass(kg/m)]
+var UB = [
+  ["127×76×13 UB",  127.0, 76.0, 4.0, 7.6, 7.6, 16.5, 473,   84.2, 74.6, 13.0],
+  ["152×89×16 UB",  152.4, 88.7, 4.5, 7.7, 7.6, 20.3, 834,   123,  109,  16.0],
+  ["178×102×19 UB", 177.8,101.2, 4.8, 7.9, 7.6, 24.3, 1356,  171,  153,  19.0],
+  ["203×102×23 UB", 203.2,101.8, 5.4, 9.3, 7.6, 29.4, 2105,  234,  207,  23.0],
+  ["203×133×25 UB", 203.2,133.2, 5.7, 7.8, 7.6, 32.0, 2340,  258,  231,  25.1],
+  ["203×133×30 UB", 206.8,133.9, 6.4, 9.6, 7.6, 38.0, 2900,  314,  281,  30.0],
+  ["254×102×22 UB", 254.0,101.6, 5.7, 6.8, 7.6, 28.0, 2840,  259,  224,  22.0],
+  ["254×102×25 UB", 257.2,101.9, 6.0, 8.4, 7.6, 32.0, 3415,  307,  266,  25.2],
+  ["254×102×28 UB", 260.4,102.2, 6.3,10.0, 7.6, 36.1, 4010,  353,  308,  28.3],
+  ["254×146×31 UB", 251.4,146.1, 6.0, 8.6, 7.6, 39.7, 4410,  393,  351,  31.1],
+  ["254×146×37 UB", 256.0,146.4, 6.3,10.9, 7.6, 47.2, 5540,  483,  433,  37.0],
+  ["254×146×43 UB", 259.6,147.3, 7.2,12.7, 7.6, 54.8, 6540,  566,  504,  43.0],
+  ["305×102×25 UB", 304.8,101.6, 5.8, 6.8, 7.6, 31.6, 4455,  337,  293,  24.8],
+  ["305×102×28 UB", 308.7,101.8, 6.0, 8.8, 7.6, 36.3, 5366,  403,  348,  28.5],
+  ["305×102×33 UB", 312.7,102.4, 6.6,10.8, 7.6, 41.8, 6501,  481,  416,  32.8],
+  ["305×127×37 UB", 304.4,123.3, 7.1,10.7, 8.9, 47.2, 7162,  539,  471,  37.0],
+  ["305×127×42 UB", 307.2,124.3, 8.0,12.1, 8.9, 53.4, 8200,  614,  534,  41.9],
+  ["305×127×48 UB", 310.4,125.3, 9.0,14.0, 8.9, 61.2, 9575,  706,  617,  48.1],
+  ["305×165×40 UB", 303.4,165.0, 6.0,10.2, 8.9, 51.3, 8500,  623,  560,  40.3],
+  ["305×165×46 UB", 306.6,165.7, 6.7,11.8, 8.9, 58.9, 9900,  720,  646,  46.1],
+  ["305×165×54 UB", 310.9,166.9, 7.9,13.7, 8.9, 68.8,11700,  846,  754,  54.0],
+  ["356×127×33 UB", 349.0,125.4, 6.0, 8.5,10.2, 42.1, 8196,  543,  470,  33.1],
+  ["356×127×39 UB", 353.4,126.0, 6.6,10.7,10.2, 49.8,10170,  659,  576,  39.1],
+  ["356×171×45 UB", 351.4,171.1, 7.0, 9.7,10.2, 57.0,12070,  775,  687,  44.9],
+  ["356×171×51 UB", 355.6,171.5, 7.4,11.5,10.2, 64.9,14140,  895,  796,  51.0],
+  ["356×171×57 UB", 358.0,172.2, 8.1,13.0,10.2, 72.6,16040, 1010,  896,  57.0],
+  ["406×140×39 UB", 398.0,141.8, 6.4, 8.6,10.2, 49.4,12510,  724,  629,  38.8],
+  ["406×140×46 UB", 402.3,142.2, 6.8,11.2,10.2, 58.6,15690,  888,  781,  46.0],
+  ["406×178×54 UB", 402.6,177.7, 7.7,10.9,10.2, 68.4,18670, 1055,  927,  54.1],
+  ["406×178×60 UB", 406.4,177.9, 7.9,12.8,10.2, 76.0,21600, 1199, 1063,  60.0],
+  ["406×178×67 UB", 409.4,178.8, 8.8,14.3,10.2, 85.5,24300, 1346, 1187,  67.1],
+  ["406×178×74 UB", 412.8,179.5, 9.5,16.0,10.2, 95.0,27300, 1501, 1323,  74.2],
+  ["457×152×52 UB", 449.8,152.4, 7.6,10.9,10.2, 66.6,21370, 1096,  950,  52.3],
+  ["457×152×60 UB", 454.6,152.9, 8.1,13.3,10.2, 75.9,25500, 1287, 1120,  59.8],
+  ["457×152×67 UB", 458.0,153.8, 9.0,15.0,10.2, 85.5,28900, 1453, 1263,  67.2],
+  ["457×191×67 UB", 453.4,189.9, 8.5,12.7,10.2, 85.5,29380, 1470, 1296,  67.1],
+  ["457×191×74 UB", 457.0,190.4, 9.0,14.5,10.2, 94.6,33320, 1653, 1458,  74.3],
+  ["457×191×82 UB", 460.0,191.3, 9.9,16.0,10.2,  104,37050, 1831, 1611,  82.0],
+  ["533×210×82 UB", 528.3,208.8, 9.6,13.2,12.7,  105,47540, 2058, 1800,  82.2],
+  ["533×210×92 UB", 533.1,209.3,10.1,15.6,12.7,  118,55230, 2366, 2072,  92.1],
+  ["533×210×101 UB",536.7,210.0,10.8,17.4,12.7,  129,61520, 2612, 2292, 101.0]
+];
+var UBk={n:0,h:1,b:2,tw:3,tf:4,r:5,A:6,Ixx:7,Wpl:8,Wel:9,mass:10};
+
+// UC table: [name, h, b, tw, tf, r, A(cm²), Ixx(cm⁴), Iyy(cm⁴), Wpl(cm³), ryy(mm), mass(kg/m)]
+var UC = [
+  ["152×152×23 UC",152.4,152.5, 5.8, 6.8, 7.6, 29.2, 1250,  400, 182, 37.0, 23.0],
+  ["152×152×30 UC",157.6,152.9, 6.5, 9.4, 7.6, 38.3, 1748,  560, 248, 38.2, 30.0],
+  ["152×152×37 UC",161.8,154.4, 8.1,11.5, 7.6, 47.1, 2218,  706, 310, 38.7, 37.0],
+  ["203×203×46 UC",203.2,203.6, 7.2,11.0,10.2, 58.8, 4568, 1548, 497, 51.3, 46.1],
+  ["203×203×52 UC",206.2,203.9, 7.9,12.5,10.2, 66.4, 5259, 1778, 567, 51.7, 52.0],
+  ["203×203×60 UC",209.6,205.2, 9.3,14.2,10.2, 75.8, 6088, 2056, 652, 52.0, 60.0],
+  ["203×203×71 UC",215.8,206.4,10.3,17.3,10.2, 91.1, 7618, 2537, 802, 52.8, 71.0],
+  ["203×203×86 UC",222.2,209.1,12.7,20.5,10.2,  110, 9449, 3119, 977, 53.2, 86.1],
+  ["254×254×73 UC",254.1,254.6, 8.6,14.2,12.7, 93.1,11360, 3873, 990, 64.5, 73.1],
+  ["254×254×89 UC",260.3,255.9,10.3,17.3,12.7,  114,14307, 4857,1224, 65.2, 88.9],
+  ["254×254×107 UC",266.7,258.3,12.8,20.5,12.7, 136,17510, 5928,1484, 65.9,107.0],
+  ["254×254×132 UC",276.3,261.3,15.3,25.3,12.7, 168,22416, 7531,1869, 66.9,132.0],
+  ["305×305×97 UC",307.9,305.3, 9.9,15.4,15.2,  123,22200, 7308,1589, 77.0, 97.1],
+  ["305×305×118 UC",314.5,306.8,11.9,18.7,15.2, 150,27600, 9059,1952, 77.6,118.0],
+  ["305×305×137 UC",320.5,308.7,13.8,21.7,15.2, 174,32800,10700,2297, 78.2,137.0]
+];
+var UCk={n:0,h:1,b:2,tw:3,tf:4,r:5,A:6,Ixx:7,Iyy:8,Wpl:9,ryy:10,mass:11};
+
+// Angle table: [name, A(cm²), Ixx(cm⁴), ryy(mm), mass(kg/m)]
+var ANG = [
+  ["L50×50×5",   4.80, 11.0,  9.70, 3.77],
+  ["L50×50×6",   5.69, 12.8,  9.66, 4.47],
+  ["L60×60×5",   5.82, 19.4, 11.70, 4.57],
+  ["L60×60×6",   6.91, 22.8, 11.60, 5.42],
+  ["L65×65×6",   7.51, 29.0, 12.60, 5.89],
+  ["L70×70×6",   8.13, 37.3, 13.60, 6.38],
+  ["L70×70×7",   9.40, 42.7, 13.50, 7.38],
+  ["L75×75×6",   8.73, 46.2, 14.50, 6.85],
+  ["L75×75×8",  11.50, 59.7, 14.40, 9.03],
+  ["L80×80×6",   9.35, 57.1, 15.60, 7.34],
+  ["L80×80×8",  12.30, 74.0, 15.40, 9.66],
+  ["L90×90×6",  10.60, 82.2, 17.60, 8.30],
+  ["L90×90×8",  13.90,107.0, 17.50,10.90],
+  ["L100×100×8",15.50,145.0, 19.60,12.20],
+  ["L100×100×10",19.20,177.0,19.40,15.10],
+  ["L100×100×12",22.70,206.0,19.20,17.80],
+  ["L120×120×10",23.20,310.0,23.40,18.20],
+  ["L120×120×12",27.50,364.0,23.20,21.60],
+  ["L150×150×12",34.80,717.0,29.10,27.30],
+  ["L150×150×15",43.10,878.0,28.90,33.80]
+];
+var ANGk={n:0,A:1,Ixx:2,ryy:3,mass:4};
+
+// BOLT table: [name, dia(mm), As(mm²), fub(MPa), grade, Ft_Rd(kN), Fv_Rd(kN), n_bolts]
+// EC3 §3.6.1: Ft,Rd = k2·fub·As/γM2  (k2=0.9, γM2=1.25)
+// EC3 §3.6.1: Fv,Rd = αv·fub·As/γM2  (αv=0.6 for grade 4.6 & 8.8; 0.5 for 10.9)
+var BOLT = [
+  // ── Grade 4.6 ─────────────────────────────────────────────────────────
+  ["M16 Grade 4.6",  16,  157, 400, "4.6",  45.2,  30.1],
+  ["M20 Grade 4.6",  20,  245, 400, "4.6",  70.6,  47.0],
+  ["M22 Grade 4.6",  22,  303, 400, "4.6",  87.3,  58.2],
+  ["M24 Grade 4.6",  24,  353, 400, "4.6", 101.7,  67.8],
+  ["M27 Grade 4.6",  27,  459, 400, "4.6", 132.2,  88.1],
+  ["M30 Grade 4.6",  30,  561, 400, "4.6", 161.6, 107.7],
+  ["M36 Grade 4.6",  36,  817, 400, "4.6", 235.3, 156.9],
+  // ── Grade 8.8 ─────────────────────────────────────────────────────────
+  ["M12 Grade 8.8",  12,  84.3, 800, "8.8",  48.7,  32.5],
+  ["M16 Grade 8.8",  16,  157,  800, "8.8",  90.5,  60.3],
+  ["M20 Grade 8.8",  20,  245,  800, "8.8", 141.1,  94.1],
+  ["M22 Grade 8.8",  22,  303,  800, "8.8", 174.5, 116.4],
+  ["M24 Grade 8.8",  24,  353,  800, "8.8", 203.3, 135.6],
+  ["M27 Grade 8.8",  27,  459,  800, "8.8", 264.4, 176.3],
+  ["M30 Grade 8.8",  30,  561,  800, "8.8", 323.3, 215.5],
+  ["M33 Grade 8.8",  33,  694,  800, "8.8", 399.6, 266.4],
+  ["M36 Grade 8.8",  36,  817,  800, "8.8", 470.6, 313.7],
+  ["M39 Grade 8.8",  39,  976,  800, "8.8", 561.6, 374.4],
+  ["M42 Grade 8.8",  42, 1120,  800, "8.8", 645.1, 430.1],
+  ["M48 Grade 8.8",  48, 1470,  800, "8.8", 846.7, 564.5],
+  // ── Grade 10.9 ────────────────────────────────────────────────────────
+  ["M16 Grade 10.9", 16,  157, 1000, "10.9", 113.0,  75.4],
+  ["M20 Grade 10.9", 20,  245, 1000, "10.9", 176.4, 117.6],
+  ["M22 Grade 10.9", 22,  303, 1000, "10.9", 218.2, 145.4],
+  ["M24 Grade 10.9", 24,  353, 1000, "10.9", 254.2, 169.4],
+  ["M27 Grade 10.9", 27,  459, 1000, "10.9", 330.5, 220.3],
+  ["M30 Grade 10.9", 30,  561, 1000, "10.9", 404.2, 269.5],
+  ["M36 Grade 10.9", 36,  817, 1000, "10.9", 588.2, 392.2],
+  ["M42 Grade 10.9", 42, 1120, 1000, "10.9", 806.4, 537.6]
+];
+// BLT index: n=0,dia=1,As=2,fub=3,grade=4,FtRd=5,FvRd=6
+var BLTk={n:0,dia:1,As:2,fub:3,grade:4,FtRd:5,FvRd:6};
+
+// ═══ SELECTED SECTION INDICES (default) ════════════════════════
+// M24 Grade 8.8 = index 11 in BOLT array
+var SEL = {pb:16, sb:2, uc:0, br:7, bolt:11};
+// 305×127×42 UB, 178×102×19 UB, 152×152×23 UC, L75×75×8
+
+// ═══ USER INPUTS ═══════════════════════════════════════════════
+var P = {
+  L:4.5, W:3.53, H:3.66, fb:0.20,
+  Ht:12.0, nc:4, bl:3,
+  fy:275, fck:25, fyr:460, gM0:1.0,
+  vb:30, Cp:1.2, Ce:1.1, gust:0.10, Atow:14.0,
+  gG:1.35, gQ:1.50,
+  pb_span:3.0, sb_span:2.5, sb_sp:1.125,
+  qa:157, stiff:4.5, conn:3.0,
+  nb:4, bz:200,
+  // Additional check parameters
+  ss_wall:1.22, ss_floor:1.22, // stiffener spacings (m)
+  mu_slide:0.40,               // friction coeff. (concrete on granular soil)
+  ag:0.10,                     // peak ground acceleration (fraction of g)
+  S_ec8:1.20, Tc_ec8:0.50, q_ec8:1.50, // EC8 spectrum params (Type B soil)
+  t_wall:6, t_floor:8,         // plate thicknesses (mm)
+  // Ground beam inputs
+  gb_on:false,   // toggle: true = always show, false = auto-show when soil is weak
+  qa_warn:100,   // threshold (kN/m²): below this → auto-activate ground beam section
+  gb_b:300,      // ground beam width (mm)
+  gb_h:500,      // ground beam depth (mm)
+  gb_cover:50,   // concrete cover to links (mm)
+  gb_link:8,     // link diameter (mm)
+  gb_phi:16,     // main bar diameter (mm)
+  gb_fck:25      // concrete grade for ground beams
+};
+
+// ═══ MATH SHORTCUTS ════════════════════════════════════════════
+var PI=Math.PI, sq=Math.sqrt, ce=Math.ceil, mn=Math.min, mx=Math.max, pw=Math.pow, si=Math.sin, ab=Math.abs;
+function d(v,n){return typeof v==='number'?v.toFixed(n===undefined?2:n):v}
+function uc_col(r){return r<0.70?'#43A047':r<0.90?'#FB8C00':'#E53935'}
+
+// ═══ COMPUTE ALL RESULTS ════════════════════════════════════════
+function PROPROW_BOLT(s){
+  return '<table class="spt">'
+    +'<tr class="sh"><td>Designation</td><td>d (mm)</td><td>Aₛ (mm²)</td>'
+    +'<td>Grade</td><td>fᵤᵥ (MPa)</td><td>γM2</td>'
+    +'<td>Ft,Rd tension (kN)</td><td>Fv,Rd shear (kN)</td></tr>'
+    +'<tr><td><b>'+s[0]+'</b></td><td>'+s[1]+'</td><td>'+s[2]+'</td>'
+    +'<td><b>'+s[4]+'</b></td><td>'+s[3]+'</td><td>1.25</td>'
+    +'<td><b>'+s[5].toFixed(1)+'</b></td><td><b>'+s[6].toFixed(1)+'</b></td></tr>'
+    +'<tr class="sh"><td colspan="8" style="text-align:left;font-style:italic;font-weight:normal">'
+    +'EC3 &sect;3.6.1 &mdash; Ft,Rd = 0.9&times;fub&times;As/&gamma;M2 &nbsp;|&nbsp; '
+    +'Fv,Rd = &alpha;v&times;fub&times;As/&gamma;M2 (&alpha;v=0.6 for 4.6 &amp; 8.8; 0.5 for 10.9)'
+    +'</td></tr></table>';
+}
+
+function compute(){
+  var p=P;
+  var pb=UB[SEL.pb], sb=UB[SEL.sb], uc=UC[SEL.uc], br=ANG[SEL.br];
+  var eps=sq(235/p.fy);
+
+  // 1. GEOMETRY
+  var Heff=p.H-p.fb, Vol=p.L*p.W*Heff;
+
+  // 2. DEAD LOADS
+  var Ww=Vol*9.81;
+  var pA=1.22*1.22;
+  var Aw=2*(p.L*p.H+p.W*p.H), nw=ce(Aw/pA), nf=ce(p.L*p.W/pA);
+  var wp6=pA*0.006*78.5, wp8=pA*0.008*78.5, wp5=pA*0.005*78.5;
+  var Wwa=nw*wp6, Wfl=nf*wp8, Wro=nf*wp5;
+  var Wtank=Wwa+Wfl+Wro+p.stiff;
+  var pb_kNm=pb[UBk.mass]*9.81/1000, sb_kNm=sb[UBk.mass]*9.81/1000;
+  var uc_kNm=uc[UCk.mass]*9.81/1000, br_kNm=br[ANGk.mass]*9.81/1000;
+  var Wcol=uc_kNm*p.Ht*p.nc;
+  var Wpb=pb_kNm*p.pb_span*2, Wsb=sb_kNm*p.W*3;
+  var diag=sq(pw(p.Ht/p.bl,2)+pw(p.L/2,2));
+  var Wbr=p.bl*4*diag*br_kNm;
+  var Gtow=Wcol+Wpb+Wsb+Wbr+p.conn;
+  var Gk=Ww+Wtank+Gtow;
+
+  // 3. WIND
+  var qb=0.5*1.25*pw(p.vb,2)/1000;
+  var qd=qb*p.Cp*p.Ce;
+  var At=p.L*p.H, Atot=At+p.Atow;
+  var Fw=qd*Atot*(1+p.gust), Mw=Fw*(p.Ht/2);
+
+  // 4. ULS
+  var NEd=p.gG*Gk+p.gQ*Fw;
+  var NEc=NEd/p.nc, Mcol=Mw/p.nc;
+
+  // 5. PRIMARY BEAM
+  var pb_load=NEd/2, pb_w=pb_load/p.pb_span;
+  var pb_Med=pb_w*pw(p.pb_span,2)/8, pb_Ved=pb_w*p.pb_span/2;
+  var pb_MRd=pb[UBk.Wpl]*1e3*p.fy/p.gM0/1e6;
+  var pb_hw=pb[UBk.h]-2*pb[UBk.tf];
+  var pb_Av=pb[UBk.tw]*pb_hw;
+  var pb_VRd=pb_Av*p.fy/(sq(3)*p.gM0*1000);
+  var pb_lam=pb_hw/pb[UBk.tw], pb_lim=67*eps;
+  var pb_n1=2.5*(pb[UBk.tf]+pb[UBk.r]);
+  var pb_beff=100+pb_n1, pb_FRd=pb_beff*pb[UBk.tw]*p.fy/1000;
+  var pb_ok=pb_Med<pb_MRd && pb_Ved<pb_VRd && pb_lam<pb_lim && pb_Ved<pb_FRd;
+
+  // 6. SECONDARY BEAM
+  var qpl=NEd/(p.L*p.W), sb_w=qpl*p.sb_sp;
+  var sb_Med=sb_w*pw(p.sb_span,2)/8, sb_Ved=sb_w*p.sb_span/2;
+  var sb_MRd=sb[UBk.Wpl]*1e3*p.fy/p.gM0/1e6;
+  var sb_hw=sb[UBk.h]-2*sb[UBk.tf];
+  var sb_Av=sb[UBk.tw]*sb_hw;
+  var sb_VRd=sb_Av*p.fy/(sq(3)*p.gM0*1000);
+  var sb_rat=sb_Ved/sb_VRd;
+  var sb_MRr=sb_rat>0.5?(1-pw(2*sb_rat-1,2))*sb_MRd:sb_MRd;
+  var sb_Ixx_mm4=sb[UBk.Ixx]*1e4;
+  var sb_ws=sb_w/p.gG;
+  var sb_del=5*(sb_ws/1000)*pw(p.sb_span*1000,4)/(384*210000*sb_Ixx_mm4);
+  var sb_dlim=p.sb_span*1000/250;
+  var sb_ok=sb_Med<sb_MRd && sb_Ved<sb_VRd && sb_Med<sb_MRr && sb_del<sb_dlim;
+
+  // 7. COLUMN
+  var Amm2=uc[UCk.A]*100;
+  var Npl=Amm2*p.fy/1000;
+  var Leff=(p.Ht/p.bl)*1000;
+  var lam=Leff/uc[UCk.ryy], lam1=PI*sq(210000/p.fy), lamr=lam/lam1;
+  var al=0.34, phi_=0.5*(1+al*(lamr-0.2)+lamr*lamr);
+  var disc=pw(phi_,2)-pw(lamr,2);
+  var chi=mn(1.0, disc>0?1/(phi_+sq(disc)):1.0);
+  var NbRd=chi*Npl;
+  var uc_MRd=uc[UCk.Wpl]*1e3*p.fy/p.gM0/1e6;
+  var iact=NEc/NbRd+Mcol/uc_MRd;
+  var uc_ok=NEc<Npl && NEc<NbRd && iact<1.0;
+
+  // 8. BRACING
+  var T1=(Fw*0.5)/(2*si(PI/4)), Tdes=T1*1.5;
+  var br_Pt=br[ANGk.A]*100*p.fy/1000;
+  var br_ok=Tdes<br_Pt;
+
+  // 9. BASE PLATE & BOLTS
+  var blt=BOLT[SEL.bolt];
+  var bp_sig=NEc*1000/(300*300);
+  var nb_tension=p.nb/2;                         // bolts on tension side
+  var T_bolt=Mcol*1e6/(p.bz*nb_tension)/1000;   // tension per bolt (kN)
+  var V_bolt=Fw/(p.nc*p.nb);                     // shear per bolt (kN) — wind distributed
+  var FtRd=blt[BLTk.FtRd];                       // from table
+  var FvRd=blt[BLTk.FvRd];                       // from table
+  var bp_ok=bp_sig<0.6*p.fy && T_bolt<FtRd && V_bolt<FvRd;
+
+  // 10. FOUNDATION
+  var Ns=NEc/p.gG, ecc=Mcol/Ns;
+  var Bf=1.5, Af=2.25, dfnd=375, zfnd=0.95*dfnd;
+  var qavg=Ns/Af, qmax=qavg*(1+6*ecc/Bf);
+  var Mfnd=qavg*Bf*Bf/8;
+  var Asreq=Mfnd*1e6/(0.87*p.fyr*zfnd), Asmin=0.0013*1000*dfnd, Asprov=753;
+  var uperim=2*(uc[UCk.h]+4*dfnd);
+  var Ain=pw((uc[UCk.h]+2*dfnd)/1000,2);
+  var Vsoil=qavg*Ain, VEdp=Ns-Vsoil;
+  var vEd=VEdp*1000/(uperim*dfnd);
+  var kp=mn(2.0,1+sq(200/dfnd));
+  var rho_l=Asprov/(1000*dfnd);
+  var vRdc=(0.18/p.gM0)*kp*pw(100*rho_l*p.fck,1/3);
+  var fnd_ok=qmax<p.qa && Asprov>mx(Asreq,Asmin) && vEd<vRdc;
+
+  // 11. GROUND BEAM (tie beam between pads)
+  var gb=P; // alias for readability
+  var gb_d=gb.gb_h-gb.gb_cover-gb.gb_link-Math.round(gb.gb_phi/2); // effective depth mm
+  var gb_z=Math.min(0.95*gb_d, gb_d-25);                            // lever arm mm
+  var L_long=p.L, L_short=p.W;                                      // column spacings
+  var L_crit=Math.max(L_long,L_short);                              // critical (longest) span
+
+  // Loads
+  var gb_wsw=25*(gb.gb_b/1000)*(gb.gb_h/1000);                    // self-weight kN/m
+  var gb_wsoil=qavg*(gb.gb_b/1000);                                // upward soil pressure kN/m
+  var gb_wnet=p.gG*gb_wsw - 1.0*gb_wsoil;                         // net ULS UDL kN/m
+
+  // Tie force: 5% of column axial per EC8 / good practice (tension & compression)
+  var T_tie=0.05*NEc;
+
+  // Internal forces (worst case — longest span, simply supported)
+  var gb_Med=Math.abs(gb_wnet)*L_crit*L_crit/8;                   // kNm
+  var gb_Ved=Math.abs(gb_wnet)*L_crit/2;                           // kN
+
+  // Bending reinforcement (EC2)
+  var fctm=0.3*pw(gb.gb_fck,2/3);
+  var As_min_gb=mx(0.26*fctm/p.fyr*gb.gb_b*gb_d, 0.0013*gb.gb_b*gb_d);
+  var As_bend_gb=gb_Med>0 ? gb_Med*1e6/(0.87*p.fyr*gb_z) : 0;
+  var As_tie_gb=T_tie*1000/(0.87*p.fyr);                           // tie tension component
+  var As_req_gb=mx(As_bend_gb+As_tie_gb, As_min_gb);
+
+  // Provided steel: n bars of diameter phi
+  var bar_area=PI*pw(gb.gb_phi/2,2);
+  var n_bars=Math.max(2, Math.ceil(As_req_gb/bar_area));
+  var As_prov_gb=n_bars*bar_area;
+
+  // Shear check (EC2 §6.2)
+  var k_gb=mn(2.0,1+sq(200/gb_d));
+  var rho_gb=mn(0.02, As_prov_gb/(gb.gb_b*gb_d));
+  var vRdc_gb=(0.18/p.gM0)*k_gb*pw(100*rho_gb*gb.gb_fck,1/3);
+  var vEd_gb=gb_Ved*1000/(gb.gb_b*gb_d);
+  var gb_links_req=vEd_gb>vRdc_gb;
+
+  // Link design (if required)
+  var Asw_s_gb=0, s_link_gb=200; // default link spacing
+  if(gb_links_req){
+    var fywd=mn(p.fyr/1.15, 400);
+    var cot_theta=1.0; // theta=45°
+    // V_Rd,s = (Asw/s)*z*fywd*cot_theta >= V_Ed
+    Asw_s_gb=gb_Ved*1000/(gb_z*fywd*cot_theta); // mm²/mm
+    s_link_gb=mn(200, Math.floor(2*PI*pw(gb.gb_link/2,2)/Asw_s_gb));
+  }
+
+  // Compression strut check (beam also acts as compression strut under reversed wind)
+  var sigma_strut=T_tie*1000/(gb.gb_b*gb.gb_h);                   // MPa
+  var sigma_strut_lim=0.4*gb.gb_fck;
+
+  // Auto-show trigger
+
+  // ─ TANK PLATE CHECKS ────────────────────────────────────────────
+  var p_wmax=9.81*Heff;
+  var N_hoop=p_wmax*mx(p.L,p.W)/2;
+  var sigma_mem=N_hoop*1000/(p.t_wall*1000);
+  var M_wall=p_wmax*pw(p.ss_wall,2)/8;
+  var sigma_bwall=6*M_wall*1e6/(p.t_wall*p.t_wall*1000);
+  var sigma_wtot=sigma_mem+sigma_bwall;
+  var sig_lim=p.fy/p.gM0;
+  var wall_ok=sigma_wtot<sig_lim;
+  var sig_avail=sig_lim-sigma_mem;
+  var ss_wall_max=sq(Math.max(0,sig_avail)*8*p.t_wall*p.t_wall*1000/(6*p_wmax*1e6));
+  var M_floor=p_wmax*pw(p.ss_floor,2)/8;
+  var sigma_floor=6*M_floor*1e6/(p.t_floor*p.t_floor*1000);
+  var floor_ok=sigma_floor<sig_lim;
+  var ss_floor_max=sq(sig_lim*8*p.t_floor*p.t_floor*1000/(6*p_wmax*1e6));
+
+  // ─ PRIMARY BEAM DEFLECTION (SLS) ────────────────────────────────
+  var pb_w_ser=(Gk/2)/p.pb_span;
+  var pb_Ixx_mm4=pb[UBk.Ixx]*1e4;
+  var pb_del=5*(pb_w_ser/1000)*pw(p.pb_span*1000,4)/(384*210000*pb_Ixx_mm4);
+  var pb_dlim=p.pb_span*1000/360;
+  var pb_def_ok=pb_del<pb_dlim;
+
+  // ─ EMPTY TANK UPLIFT ────────────────────────────────────────────
+  var N_col_empty=(Wtank+Gtow)/p.nc;
+  var M_ot_uls=p.gQ*Mw;
+  var lever_wind=mn(p.L,p.W);
+  var F_uplift_col=M_ot_uls/lever_wind;
+  var N_net_empty=1.0*N_col_empty-F_uplift_col;
+  var uplift_exists=N_net_empty<0;
+  var T_bolt_up=uplift_exists?Math.abs(N_net_empty)/(p.nb/2):0;
+  var bolt_up_ok=!uplift_exists||T_bolt_up<FtRd;
+
+  // ─ FOUNDATION SLIDING ───────────────────────────────────────────
+  var F_slide=p.gQ*Fw;
+  var N_serv_tot=p.nc*Ns;
+  var R_slide=p.mu_slide*N_serv_tot;
+  var slide_ok=F_slide<R_slide;
+
+  // ─ SEISMIC EC8 ──────────────────────────────────────────────────
+  var T1_ec8=0.085*pw(p.Ht,0.75);
+  var ag_ms2=p.ag*9.81;
+  var Sd_ec8=T1_ec8<=p.Tc_ec8
+    ? ag_ms2*p.S_ec8*2.5/p.q_ec8
+    : ag_ms2*p.S_ec8*(2.5/p.q_ec8)*(p.Tc_ec8/T1_ec8);
+  var Fb_ec8=Sd_ec8*Gk/9.81;
+  var seismic_governs=Fb_ec8>Fw;
+  var gb_show=P.gb_on || P.qa<P.qa_warn;
+  var gb_bend_ok=As_prov_gb>=As_req_gb;
+  var gb_shear_ok=!gb_links_req || s_link_gb>0;
+  var gb_strut_ok=sigma_strut<sigma_strut_lim;
+  var gb_all_ok=gb_bend_ok && gb_shear_ok && gb_strut_ok;
+
+  return {
+    p_wmax,N_hoop,sigma_mem,M_wall,sigma_bwall,sigma_wtot,sig_lim,wall_ok,ss_wall_max,
+    M_floor,sigma_floor,floor_ok,ss_floor_max,
+    pb_w_ser,pb_Ixx_mm4,pb_del,pb_dlim,pb_def_ok,
+    N_col_empty,M_ot_uls,lever_wind,F_uplift_col,N_net_empty,uplift_exists,T_bolt_up,bolt_up_ok,
+    F_slide,N_serv_tot,R_slide,slide_ok,
+    T1_ec8,ag_ms2,Sd_ec8,Fb_ec8,seismic_governs,
+    Heff,Vol,Ww,Wwa,Wfl,Wro,Wtank,nw,nf,pA,wp6,wp8,wp5,diag,
+    Wcol,Wpb,Wsb,Wbr,Gtow,Gk,
+    qb,qd,At,Atot,Fw,Mw,
+    NEd,NEc,Mcol,
+    pb_load,pb_w,pb_Med,pb_Ved,pb_MRd,pb_Av,pb_VRd,pb_hw,pb_lam,pb_lim,pb_n1,pb_beff,pb_FRd,pb_ok,
+    sb_w,sb_Med,sb_Ved,sb_MRd,sb_hw,sb_Av,sb_VRd,sb_rat,sb_MRr,sb_ws,sb_del,sb_dlim,sb_ok,
+    Amm2,Npl,Leff,lam,lam1,lamr,phi_,chi,NbRd,uc_MRd,iact,uc_ok,
+    T1,Tdes,br_Pt,br_ok,
+    bp_sig,T_bolt,V_bolt,FtRd,FvRd,nb_tension,bp_ok,
+    Ns,ecc,Af,qavg,qmax,Mfnd,dfnd,zfnd,Asreq,Asmin,Asprov,
+    uperim,Ain,Vsoil,VEdp,vEd,kp,rho_l,vRdc,fnd_ok,eps,
+    pb_kNm,sb_kNm,uc_kNm,br_kNm,
+    gb_show,gb_d,gb_z,L_long,L_short,L_crit,
+    gb_wsw,gb_wsoil,gb_wnet,T_tie,
+    gb_Med,gb_Ved,fctm,As_min_gb,As_bend_gb,As_tie_gb,As_req_gb,
+    n_bars,As_prov_gb,bar_area,
+    k_gb,rho_gb,vRdc_gb,vEd_gb,gb_links_req,s_link_gb,Asw_s_gb,
+    sigma_strut,sigma_strut_lim,gb_bend_ok,gb_shear_ok,gb_strut_ok,gb_all_ok
+  };
+}
+
+// ═══ AUTO-FIX: find lightest adequate section ════════════════════
+  function trySection(comp,idx){
+  var saved=SEL[comp]; SEL[comp]=idx;
+  var c=compute(); SEL[comp]=saved;
+  if(comp==='pb')   return c.pb_ok;
+  if(comp==='sb')   return c.sb_ok;
+  if(comp==='uc')   return c.uc_ok;
+  if(comp==='br')   return c.br_ok;
+  if(comp==='bolt') return c.bp_ok;
+}
+window.autoFix=function(comp){
+  var db=comp==='uc'?UC:comp==='br'?ANG:comp==='bolt'?BOLT:UB;
+  for(var i=0;i<db.length;i++){
+    if(trySection(comp,i)){SEL[comp]=i;render();return;}
+  }
+  alert('No section in the database is adequate — reduce loads or revise the structure.');
+}
+window.onSelChange=function(comp,val){SEL[comp]=parseInt(val);render();}
+
+// ═══ HTML BUILDERS ═══════════════════════════════════════════════
+function ROW(ref,calc,out,cls){
+  return '<tr class="'+(cls||'')+'"><td class="REF">'+ref+'</td><td class="CALC">'+calc+'</td><td class="OUT">'+out+'</td></tr>';
+}
+function SECROW(t){return '<tr class="SEC"><td colspan="3">'+t+'</td></tr>';}
+function SUBROW(t){return '<tr class="SUB"><td colspan="3">'+t+'</td></tr>';}
+function OB(lbl,val,u){return '<div class="OB">'+lbl+'<br><span style="font-size:12px">'+val+'</span>'+(u?' '+u:'')+'</div>';}
+
+function CL(fm,sv,res,unit){
+  var s='<span class="CL">';
+  if(fm)  s+='<span class="FM">'+fm+'</span>';
+  if(sv)  s+='<span class="CL i1 SV">= '+sv+'</span>';
+  if(res) s+='<span class="CL i2 BD">= '+res+(unit?' '+unit:'')+'</span>';
+  return s+'</span>';
+}
+function inp(key,cls,step,mn_){
+  return '<input class="inp '+(cls||'im')+'" type="number" '
+    +'step="'+(step||0.01)+'" '+(mn_!==undefined?'min="'+mn_+'" ':'')
+    +'value="'+P[key]+'" data-key="'+key+'" onchange="onInputChange(this)">';
+}
+function CHKROW(label,pass,Ed,Rd,unit,dp){
+  dp=dp===undefined?2:dp;
+  var r=mn(Ed/Rd,1.99), pct=mn(r*100,100).toFixed(0);
+  var badge=pass
+    ?'<span class="tick">&#10003;</span> <span class="pass-lbl">'+d(Ed,dp)+' &lt; '+d(Rd,dp)+' '+unit+'</span>'
+    :'<span class="cross">&#10007;</span> <span class="fail-lbl">'+d(Ed,dp)+' &gt; '+d(Rd,dp)+' '+unit+' — SECTION TOO SMALL</span>';
+  return '<tr class="'+(pass?'PASS':'FAIL')+'">'
+    +'<td class="REF"></td>'
+    +'<td class="CALC">'+label+'<br>'+badge
+    +'<div class="ubw"><div class="ubb"><div class="ubf" style="width:'+pct+'%;background:'+uc_col(r)+'"></div></div>'
+    +'<span class="ubp">'+pct+'% utilisation</span></div></td>'
+    +'<td class="OUT">'+(pass
+      ?'<div class="OB" style="background:#E8F5E9;border-color:#388E3C">&#10003; PASS</div>'
+      :'<div class="OB" style="background:#FFEBEE;border-color:#C62828;font-size:9px">&#10007; FAIL<br>Use Auto-Fix</div>')
+    +'</td></tr>';
+}
+
+function PROPROW_UB(s){
+  return '<table class="spt"><tr class="sh"><td>h (mm)</td><td>b (mm)</td><td>t<sub>w</sub></td><td>t<sub>f</sub></td>'
+    +'<td>r</td><td>A (cm&sup2;)</td><td>I<sub>xx</sub> (cm&sup4;)</td><td>W<sub>pl</sub> (cm&sup3;)</td>'
+    +'<td>W<sub>el</sub> (cm&sup3;)</td><td>Mass (kg/m)</td></tr>'
+    +'<tr><td>'+s[1]+'</td><td>'+s[2]+'</td><td>'+s[3]+'</td><td>'+s[4]+'</td><td>'+s[5]+'</td>'
+    +'<td>'+s[6]+'</td><td>'+s[7]+'</td><td>'+s[8]+'</td><td>'+s[9]+'</td><td>'+s[10]+'</td></tr></table>';
+}
+function PROPROW_UC(s){
+  return '<table class="spt"><tr class="sh"><td>h (mm)</td><td>b (mm)</td><td>t<sub>w</sub></td><td>t<sub>f</sub></td>'
+    +'<td>r</td><td>A (cm&sup2;)</td><td>I<sub>xx</sub> (cm&sup4;)</td><td>I<sub>yy</sub> (cm&sup4;)</td>'
+    +'<td>W<sub>pl</sub> (cm&sup3;)</td><td>r<sub>yy</sub> (mm)</td><td>Mass (kg/m)</td></tr>'
+    +'<tr><td>'+s[1]+'</td><td>'+s[2]+'</td><td>'+s[3]+'</td><td>'+s[4]+'</td><td>'+s[5]+'</td>'
+    +'<td>'+s[6]+'</td><td>'+s[7]+'</td><td>'+s[8]+'</td><td>'+s[9]+'</td><td>'+s[10]+'</td><td>'+s[11]+'</td></tr></table>';
+}
+function PROPROW_ANG(s,fy){
+  var Pt=(s[1]*100*fy/1000).toFixed(1);
+  return '<table class="spt"><tr class="sh"><td>A (cm&sup2;)</td><td>I<sub>xx</sub> (cm&sup4;)</td>'
+    +'<td>r<sub>yy</sub> (mm)</td><td>Mass (kg/m)</td><td>P<sub>t</sub> @ f<sub>y</sub> (kN)</td></tr>'
+    +'<tr><td>'+s[1]+'</td><td>'+s[2]+'</td><td>'+s[3]+'</td><td>'+s[4]+'</td><td>'+Pt+'</td></tr></table>';
+}
+
+function SELROW(comp,db,props_fn,ok,ref_txt){
+  var dd='<select class="sec-dd'+(ok?'':' warn')+'" id="dd_'+comp+'" onchange="onSelChange(\''+comp+'\',this.value)">';
+  db.forEach(function(s,i){dd+='<option value="'+i+'"'+(i===SEL[comp]?' selected':'')+'>'+s[0]+'</option>';});
+  dd+='</select>';
+  var fixNote=ok
+    ?'<div class="ok-note">&#10003; All checks pass with this section</div>'
+    :'<div class="warn-note">&#9888; One or more checks FAILED — click <strong>Auto-Fix</strong> to find the minimum adequate section, or choose manually from the dropdown.</div>';
+  var props=props_fn(db[SEL[comp]]);
+  return '<tr class="'+(ok?'SEL-OK':'SEL-FAIL')+'">'
+    +'<td class="REF">'+ref_txt+'</td>'
+    +'<td class="CALC">'
+    +'<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px">'
+    +'<strong>&#9658; Section:</strong>'+dd
+    +(ok?'':'<button class="btn-autofix" onclick="autoFix(\''+comp+'\')">&#9881; Auto-Fix</button>')
+    +'<button class="btn-lightest" onclick="autoFix(\''+comp+'\')">&#8679; Lightest Adequate</button>'
+    +'</div>'+fixNote+props+'</td>'
+    +'<td class="OUT"></td></tr>';
+}
+
+// ═══ RENDER ══════════════════════════════════════════════════════
+function render(){
+  var c=compute(), p=P;
+  var pb=UB[SEL.pb], sb=UB[SEL.sb], uc=UC[SEL.uc], br=ANG[SEL.br];
+  var H=[];
+
+  // ─── 1. GEOMETRY ─────────────────────────────────────────────
+  H.push(SECROW('1. GEOMETRY'));
+  H.push(ROW('',
+    '<div class="NOTE">&#9999; Edit the yellow cells to match your project — all calculations update automatically.</div>'
+    +'<span class="CL BD">Tank internal dimensions:</span>'
+    +'<span class="CL i1">Length, <b>L</b> = '+inp('L','is',0.1,0.5)+' m</span>'
+    +'<span class="CL i1">Width, <b>W</b> = '+inp('W','is',0.1,0.5)+' m</span>'
+    +'<span class="CL i1">Tank height, <b>H</b> = '+inp('H','is',0.1,0.5)+' m</span>'
+    +'<span class="CL i1">Freeboard = '+inp('fb','is',0.05,0.05)+' m</span>',''));
+  H.push(ROW('',
+    CL('h = H &minus; freeboard',p.H+' &minus; '+p.fb,'<b>'+d(c.Heff)+' m</b>')
+    +CL('Volume = L &times; W &times; h',p.L+' &times; '+p.W+' &times; '+d(c.Heff),'<b>'+d(c.Vol,1)+' m&sup3;</b>'),
+    OB('Eff. depth h =',d(c.Heff),'m')+OB('Volume =',d(c.Vol,1),'m&sup3;')));
+
+  // ─── 1A. TANK PLATE CHECKS ────────────────────────────
+  H.push(SECROW('1A. TANK PLATE STRUCTURAL CHECKS (EC3 EN 1993-1-1)'));
+  H.push(ROW('Wall plate<br>t = '+inp('t_wall','is',1,2)+' mm<br><br>Floor plate<br>t = '+inp('t_floor','is',1,2)+' mm',
+    '<div class="NOTE" style="border-left-color:#1565C0;background:#E3F2FD;color:#0D47A1;margin-bottom:5px">Checks whether plate thicknesses and stiffener spacings are adequate under full hydrostatic pressure. Pressed/corrugated panels have higher certified capacity — treat as manufacturer-certified if used.</div>'
+    +CL('Design pressure at base: p = ρw×g×Heff','9.81×'+d(c.Heff),'<b>'+d(c.p_wmax)+' kN/m²</b>'),
+    OB('p<sub>max</sub>=',d(c.p_wmax),'kN/m²')));
+  H.push(SUBROW('1A.1 Wall Plate — Membrane Tension + Plate Bending'));
+  H.push(ROW('Stiffener<br>spacing:<br>s = '+inp('ss_wall','is',0.05,0.2)+' m<br><br>Simply<br>supported<br>plate strip',
+    CL('Membrane force: Nₕ = pₘₐₓ×max(L,W)/2',d(c.p_wmax)+'×'+d(mx(p.L,p.W))+'/2','<b>'+d(c.N_hoop)+' kN/m</b>')
+    +CL('Membrane stress: σₘₐₘ = Nₕ/t',d(c.N_hoop)+'×1000/('+p.t_wall+'×1000)','<b>'+d(c.sigma_mem)+' N/mm²</b>')
+    +CL('Bending moment between stiffeners: M = p×s²/8',d(c.p_wmax)+'×'+p.ss_wall+'²/8','<b>'+d(c.M_wall)+' kNm/m</b>')
+    +CL('Plate bending stress: σ<sub>bend</sub> = 6M/(t²×1000)',d(c.M_wall)+'×10⁶/('+p.t_wall+'²×1000)','<b>'+d(c.sigma_bwall)+' N/mm²</b>')
+    +CL('Combined: σ<sub>mem</sub>+σ<sub>bend</sub>','','<b>'+d(c.sigma_wtot)+' vs '+d(c.sig_lim)+' N/mm²</b>')
+    +'<span class="CL i1">Max allowable stiffener spacing (6mm flat plate at this head): <b>'+d(c.ss_wall_max)+' m</b></span>',
+    OB('σ<sub>wall</sub>=',d(c.sigma_wtot),'N/mm²')+OB('Limit=',d(c.sig_lim),'N/mm²')));
+  H.push(CHKROW('Wall: σ<sub>total</sub> < f<sub>y</sub>/γ<sub>M0</sub>',c.wall_ok,c.sigma_wtot,c.sig_lim,'N/mm²'));
+  H.push(SUBROW('1A.2 Floor Plate — Bending Under Full Water Head'));
+  H.push(ROW('Floor<br>stiffener<br>spacing:<br>s = '+inp('ss_floor','is',0.05,0.2)+' m',
+    CL('M<sub>floor</sub> = p×s<sub>f</sub>²/8',d(c.p_wmax)+'×'+p.ss_floor+'²/8','<b>'+d(c.M_floor)+' kNm/m</b>')
+    +CL('σ<sub>floor</sub> = 6M/(t²×1000)',d(c.M_floor)+'×10⁶/('+p.t_floor+'²×1000)','<b>'+d(c.sigma_floor)+' N/mm²</b>')
+    +'<span class="CL i1">Max floor stiffener spacing: <b>'+d(c.ss_floor_max)+' m</b></span>',
+    OB('σ<sub>floor</sub>=',d(c.sigma_floor),'N/mm²')+OB('Limit=',d(c.sig_lim),'N/mm²')));
+  H.push(CHKROW('Floor: σ<sub>floor</sub> < f<sub>y</sub>/γ<sub>M0</sub>',c.floor_ok,c.sigma_floor,c.sig_lim,'N/mm²'));
+  // ─── 2. LOADS ────────────────────────────────────────────────
+  H.push(SECROW('2. LOADS COLLECTION — DEAD LOADS'));
+  H.push(SUBROW('2.1 Water Load'));
+  H.push(ROW('&gamma;<sub>w</sub> = 9.81 kN/m&sup3;',
+    CL('W<sub>water</sub> = Volume &times; &gamma;<sub>w</sub>',d(c.Vol,1)+' &times; 9.81','<b>'+d(c.Ww,1)+' kN</b>'),
+    OB('W<sub>water</sub> =',d(c.Ww,1),'kN')));
+
+  H.push(SUBROW('2.2 Tank Self-weight'));
+  H.push(ROW('Steel: 78.5 kN/m&sup3;<br>Panel: 1.22&times;1.22 m',
+    '<span class="CL BD">Weight per standard 1.22&times;1.22 m plate:</span>'
+    +CL('6 mm wall: A&times;t&times;&gamma;',d(c.pA)+'&times;0.006&times;78.5','<b>'+d(c.wp6)+' kN</b>/plate')
+    +CL('8 mm floor: A&times;t&times;&gamma;',d(c.pA)+'&times;0.008&times;78.5','<b>'+d(c.wp8)+' kN</b>/plate')
+    +CL('5 mm roof: A&times;t&times;&gamma;',d(c.pA)+'&times;0.005&times;78.5','<b>'+d(c.wp5)+' kN</b>/plate'),''));
+  H.push(ROW('',
+    CL('Wall area A<sub>w</sub> = 2(LH+WH)','2('+p.L+'&times;'+p.H+'+'+p.W+'&times;'+p.H+')',d(2*(p.L*p.H+p.W*p.H))+' m&sup2; &rarr; <b>'+c.nw+' plates</b>')
+    +CL('Floor area A = L&times;W','',d(p.L*p.W)+' m&sup2; &rarr; <b>'+c.nf+' plates</b> (floor &amp; roof)')
+    +'<span class="CL" style="margin-top:4px"><b>Plate weights:</b></span>'
+    +'<span class="CL i1">Walls 6mm: '+c.nw+'&times;'+d(c.wp6)+' = <b>'+d(c.Wwa)+' kN</b></span>'
+    +'<span class="CL i1">Floor 8mm: '+c.nf+'&times;'+d(c.wp8)+' = <b>'+d(c.Wfl)+' kN</b></span>'
+    +'<span class="CL i1">Roof 5mm: '+c.nf+'&times;'+d(c.wp5)+' = <b>'+d(c.Wro)+' kN</b></span>'
+    +'<span class="CL i1">Stiffeners &amp; cleats (allowance): '+inp('stiff','is',0.5)+' kN</span>'
+    +CL('W<sub>tank</sub>',d(c.Wwa)+'+'+d(c.Wfl)+'+'+d(c.Wro)+'+'+p.stiff,'<b>'+d(c.Wtank)+' kN</b>'),
+    OB('W<sub>tank</sub> =',d(c.Wtank),'kN')));
+
+  H.push(SUBROW('2.3 Tower Steelwork — weights derived from selected sections below'));
+  H.push(ROW('Column section<br>selected in<br>Section 7 below.<br><br>&#9998; Edit tower<br>parameters here.',
+    '<div class="NOTE" style="margin-bottom:6px">&#9998; Tower height, number of columns and bracing levels are editable below. These values are shared with Section 4 (Load Combination) and Section 7 (Column Design).</div>'
+    +'<span class="CL BD">Tower geometry (editable):</span>'
+    +'<span class="CL i1">Tower height &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H<sub>t</sub> = '+inp('Ht','is',0.5,4)+' m</span>'
+    +'<span class="CL i1">Number of columns &nbsp;&nbsp;&nbsp; n<sub>c</sub> = '+inp('nc','is',1,2)+'</span>'
+    +'<span class="CL i1">Bracing levels &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; n<sub>lev</sub> = '+inp('bl','is',1,2)+'</span>'
+    +'<span class="CL i1">Primary beam span &nbsp;&nbsp;&nbsp; L<sub>pb</sub> = '+inp('pb_span','is',0.1,1)+' m</span>'
+    +'<span class="CL BD" style="margin-top:6px">Member self-weights (unit weight = mass × 9.81/1000):</span>'
+    +CL('Columns ('+p.nc+' No.): kN/m &times; H<sub>t</sub> &times; n<sub>c</sub>',
+        d(c.uc_kNm,4)+' &times; '+p.Ht+' &times; '+p.nc, '<b>'+d(c.Wcol)+' kN</b>')
+    +CL('Primary beams (2 No.): kN/m &times; span &times; 2',
+        d(c.pb_kNm,4)+' &times; '+p.pb_span+' &times; 2', '<b>'+d(c.Wpb)+' kN</b>')
+    +CL('Secondary beams (3 No.): kN/m &times; W &times; 3',
+        d(c.sb_kNm,4)+' &times; '+p.W+' &times; 3', '<b>'+d(c.Wsb)+' kN</b>')
+    +CL('Bracing '+br[0]+': n<sub>lev</sub> &times; 4 faces &times; diag &times; kN/m',
+        p.bl+' &times; 4 &times; '+d(c.diag)+' &times; '+d(c.br_kNm,4), '<b>'+d(c.Wbr)+' kN</b>')
+    +'<span class="CL i1">Connections allowance: '+inp('conn','is',0.5)+' kN</span>',
+    OB('G<sub>tower</sub> =',d(c.Gtow),'kN')));
+  H.push('<tr class="TOTAL"><td class="REF"></td>'
+    +'<td class="CALC">TOTAL DEAD LOAD<br>'
+    +'<span class="FM">G<sub>k</sub> = W<sub>water</sub>+W<sub>tank</sub>+G<sub>tower</sub> = '
+    +d(c.Ww,1)+' + '+d(c.Wtank)+' + '+d(c.Gtow)+' = <b>'+d(c.Gk,1)+' kN</b></span></td>'
+    +'<td class="OUT">'+OB('G<sub>k</sub> =',d(c.Gk,1),'kN')+'</td></tr>');
+
+  // ─── 3. WIND ────────────────────────────────────────────────
+  H.push(SECROW('3. WIND LOAD — EC1 EN 1991-1-4'));
+  H.push(ROW('EC1 §4.5<br>q<sub>b</sub>=&frac12;&rho;v<sub>b</sub>&sup2;',
+    '<span class="CL i1">Basic wind speed v<sub>b</sub> = '+inp('vb','is',1,15)+' m/s &nbsp;&nbsp; Air density &rho; = 1.25 kg/m&sup3;</span>'
+    +CL('Basic wind pressure: q<sub>b</sub> = &frac12;&rho;v<sub>b</sub>&sup2;','0.5&times;1.25&times;'+p.vb+'&sup2;/1000',d(c.qb,4)+' kN/m&sup2;')
+    +'<span class="CL i1">Pressure coefficient C<sub>p</sub> = '+inp('Cp','is',0.1,0.5)
+    +' &nbsp;&nbsp; Exposure factor C<sub>e</sub> = '+inp('Ce','is',0.05,0.9)+'</span>'
+    +CL('Design pressure: q<sub>d</sub> = q<sub>b</sub>&times;C<sub>p</sub>&times;C<sub>e</sub>',d(c.qb,4)+'&times;'+p.Cp+'&times;'+p.Ce,d(c.qd,4)+' kN/m&sup2;'),
+    OB('q<sub>d</sub> =',d(c.qd,3),'kN/m&sup2;')));
+  H.push(ROW('Gust factor<br>= '+(p.gust*100).toFixed(0)+'%',
+    CL('Tank face area: A<sub>t</sub> = L&times;H',p.L+'&times;'+p.H,d(c.At)+' m&sup2;')
+    +'<span class="CL i1">Tower projected area (open frame): '+inp('Atow','is',0.5,5)+' m&sup2;</span>'
+    +'<span class="CL i1">Gust factor: '+inp('gust','is',0.01,0)+'</span>'
+    +CL('F<sub>w</sub> = q<sub>d</sub>&times;(A<sub>t</sub>+A<sub>tower</sub>)&times;(1+gust)',d(c.qd,3)+'&times;'+d(c.Atot)+'&times;'+(1+p.gust).toFixed(2),'<b>'+d(c.Fw,1)+' kN</b>')
+    +CL('Overturning moment: M<sub>w</sub> = F<sub>w</sub>&times;H<sub>t</sub>/2',d(c.Fw,1)+'&times;'+p.Ht+'/2','<b>'+d(c.Mw,1)+' kNm</b>'),
+    OB('F<sub>w</sub> =',d(c.Fw,1),'kN')+OB('M<sub>w</sub> =',d(c.Mw,1),'kNm')));
+
+  // ─── 3A. SEISMIC ──────────────────────────────────────
+  H.push(SECROW('3A. SEISMIC LOADING — EC8 EN 1998-1 (Equivalent Static Method)'));
+  H.push(ROW('EC8 §4.3<br>Uganda rift zone<br>ag ≈ 0.05–0.15g<br>Default = 0.10g',
+    '<div class="NOTE" style="border-left-color:#6A1B9A;background:#F3E5F5;color:#4A148C;margin-bottom:5px">Uganda is on the East African Rift. EC8 base shear must be compared with wind — the larger governs lateral design of columns, bracing and foundations.</div>'
+    +'<span class="CL i1">Design ground acceleration a<sub>g</sub> = '+inp('ag','is',0.01,0.01)+' g</span>'
+    +'<span class="CL i1">Soil factor S = '+inp('S_ec8','is',0.05,0.9)+' &nbsp; Corner period T<sub>C</sub> = '+inp('Tc_ec8','is',0.05,0.2)+' s &nbsp; Behaviour factor q = '+inp('q_ec8','is',0.25,1.0)+'</span>'
+    +'<span class="CL" style="font-size:9px;color:var(--color-text-secondary)">EC8 Type 1 spectrum: Soil A(S=1.0,Tc=0.4s) | B(S=1.2,Tc=0.5s) | C(S=1.15,Tc=0.6s) | D(S=1.35,Tc=0.8s)</span>',
+    ''));
+  H.push(ROW('T<sub>1</sub>=0.085×H<sub>t</sub><sup>0.75</sup><br>(steel frame)',
+    CL('Fundamental period: T<sub>1</sub>=0.085×'+p.Ht+'^0.75','','<b>'+d(c.T1_ec8)+' s</b>')
+    +CL('S<sub>d</sub>(T<sub>1</sub>) — '+(c.T1_ec8<=p.Tc_ec8?'plateau':'descending branch'),
+        d(p.ag*9.81,3)+'×'+p.S_ec8+'×2.5/'+p.q_ec8+(c.T1_ec8>p.Tc_ec8?'×('+p.Tc_ec8+'/'+d(c.T1_ec8)+')*':''),'<b>'+d(c.Sd_ec8,4)+' m/s²</b>')
+    +CL('Base shear: F<sub>b</sub>=S<sub>d</sub>×G<sub>k</sub>/g',d(c.Sd_ec8,4)+'×'+d(c.Gk,1)+'/9.81','<b>'+d(c.Fb_ec8,1)+' kN</b>')
+    +'<div style="margin-top:6px;padding:7px 10px;background:'+(c.seismic_governs?'#FFEBEE':'#E8F5E9')+';border-left:3px solid '+(c.seismic_governs?'#C62828':'#2E7D32')+';border-radius:2px;font-size:11px;font-weight:bold;color:'+(c.seismic_governs?'#B71C1C':'#1B5E20')+';">'
+    +(c.seismic_governs?'⚠ Seismic GOVERNS ('+d(c.Fb_ec8,1)+' kN > '+d(c.Fw,1)+' kN wind) — resize bracing, columns and foundation for F<sub>b</sub>':'✓ Wind governs over seismic ('+d(c.Fw,1)+' kN > '+d(c.Fb_ec8,1)+' kN) — wind-based design is adequate')
+    +'</div>',
+    OB('F<sub>b</sub>=',d(c.Fb_ec8,1),'kN')));
+  // ─── 4. ULS ─────────────────────────────────────────────────
+  H.push(SECROW('4. LOAD COMBINATION — ULS (EC0 EN 1990 Equation 6.10)'));
+  H.push(ROW('EC0 §6.4.3<br>&gamma;<sub>G</sub> = '+inp('gG','is',0.05,1)+'<br>&gamma;<sub>Q</sub> = '+inp('gQ','is',0.05,1),
+    CL('N<sub>Ed</sub> = &gamma;<sub>G</sub>&times;G<sub>k</sub> + &gamma;<sub>Q</sub>&times;F<sub>w</sub>',
+      p.gG+'&times;'+d(c.Gk,1)+' + '+p.gQ+'&times;'+d(c.Fw,1),
+      d(p.gG*c.Gk,1)+' + '+d(p.gQ*c.Fw,1)+' = <b>'+d(c.NEd,1)+' kN</b>')
+    +CL('N<sub>Ed</sub> per column = N<sub>Ed</sub>/'+p.nc,'',d(c.NEc)+'<b> kN</b>')
+    +CL('Wind moment per column M<sub>col</sub> = M<sub>w</sub>/'+p.nc,'',d(c.Mcol)+'<b> kNm</b>'),
+    OB('N<sub>Ed</sub> =',d(c.NEd,1),'kN')+OB('N/col =',d(c.NEc,1),'kN')+OB('M/col =',d(c.Mcol),'kNm')));
+  // ─── 4A. EMPTY TANK UPLIFT ──────────────────────────
+  H.push(SECROW('4A. ALTERNATIVE ULS — EMPTY TANK + FULL WIND (Leeward Column Uplift)'));
+  H.push(ROW('γ<sub>G,inf</sub>=1.0<br>No water<br>Full wind ULS<br><br>Worst case<br>for anchor<br>bolt tension',
+    '<span class="CL BD">Service dead load per column (tank+tower only, no water):</span>'
+    +CL('N<sub>col,empty</sub>=(W<sub>tank</sub>+G<sub>tower</sub>)/n<sub>c</sub>',
+        '('+d(c.Wtank)+'+'+d(c.Gtow)+')/'+p.nc,'<b>'+d(c.N_col_empty)+' kN</b>')
+    +CL('ULS overturning moment: M<sub>OT</sub>=γ<sub>Q</sub>×M<sub>w</sub>',
+        p.gQ+'×'+d(c.Mw,1),'<b>'+d(c.M_ot_uls,1)+' kNm</b>')
+    +CL('Uplift per column: F<sub>up</sub>=M<sub>OT</sub>/min(L,W)',
+        d(c.M_ot_uls,1)+'/'+d(c.lever_wind),'<b>'+d(c.F_uplift_col,1)+' kN</b>')
+    +CL('Net column force: 1.0×N<sub>col,empty</sub>−F<sub>up</sub>',
+        '1.0×'+d(c.N_col_empty,1)+'−'+d(c.F_uplift_col,1),
+        '<b>'+d(c.N_net_empty,1)+' kN</b>'+(c.uplift_exists?' ← TENSION — bolts resist':''))
+    +(c.uplift_exists?
+      CL('Uplift per bolt: T<sub>up</sub>=|N<sub>net</sub>|/(n<sub>t</sub>)',Math.abs(c.N_net_empty).toFixed(1)+'/'+(p.nb/2).toFixed(0),'<b>'+d(c.T_bolt_up,1)+' kN</b>'):''),
+    OB('N<sub>net</sub>=',d(c.N_net_empty,1),'kN')));
+  if(c.uplift_exists){H.push(CHKROW('Bolt uplift: T<sub>up</sub> < F<sub>t,Rd</sub>',c.bolt_up_ok,c.T_bolt_up,c.FtRd,'kN'));}
+  else{H.push(ROW('',
+    '<span class="CL" style="color:#1B5E20"><b>✓ No uplift — column stays in compression under empty tank+wind. Anchor bolt uplift check not required.</b></span>',''));}
+
+  // ─── 5. PRIMARY BEAMS ───────────────────────────────────────
+  H.push(SECROW('5. DESIGN OF PRIMARY BEAMS (EC3 EN 1993-1-1 §6.2)'));
+  H.push(SELROW('pb',UB,PROPROW_UB,c.pb_ok,'EC3 §6.2<br>§6.3<br><br>Steel Tables<br>UK UB Sections'));
+  H.push(ROW('',
+    '<span class="CL BD">Loading on primary beams (2 No.):</span>'
+    +'<span class="CL i1">Span = '+inp('pb_span','is',0.1,1)+' m</span>'
+    +CL('Total load per beam = N<sub>Ed</sub> / 2',d(c.NEd,1)+'/2',d(c.pb_load,1)+' kN')
+    +CL('UDL: w = load / span',d(c.pb_load,1)+'/'+p.pb_span,'<b>'+d(c.pb_w)+' kN/m</b>')
+    +CL('Design moment: M<sub>Ed</sub> = wL&sup2;/8',d(c.pb_w)+'&times;'+p.pb_span+'&sup2;/8','<b>'+d(c.pb_Med)+' kNm</b>')
+    +CL('Design shear: V<sub>Ed</sub> = wL/2',d(c.pb_w)+'&times;'+p.pb_span+'/2','<b>'+d(c.pb_Ved)+' kN</b>'),
+    OB('M<sub>Ed</sub> =',d(c.pb_Med),'kNm')+OB('V<sub>Ed</sub> =',d(c.pb_Ved),'kN')));
+  H.push(SUBROW('5.1 Bending Resistance (EC3 §6.2.5)'));
+  H.push(ROW('f<sub>y</sub> = '+inp('fy','is',5,235)+' MPa<br>&gamma;<sub>M0</sub> = '+d(p.gM0),
+    CL('M<sub>Rd</sub> = W<sub>pl</sub>&times;f<sub>y</sub>/&gamma;<sub>M0</sub>',pb[8]+'&times;10&sup3;&times;'+p.fy+'/'+p.gM0+'/10&sup6;','<b>'+d(c.pb_MRd)+' kNm</b>'),
+    OB('M<sub>Rd</sub> =',d(c.pb_MRd),'kNm')));
+  H.push(CHKROW('Bending: M<sub>Ed</sub> &lt; M<sub>Rd</sub>',c.pb_Med<c.pb_MRd,c.pb_Med,c.pb_MRd,'kNm'));
+  H.push(SUBROW('5.2 Shear Resistance (EC3 §6.2.6)'));
+  H.push(ROW('A<sub>v</sub> = t<sub>w</sub>&times;h<sub>w</sub>',
+    CL('Clear web depth: h<sub>w</sub> = h&minus;2t<sub>f</sub>',pb[1]+'-2&times;'+pb[4],'<b>'+d(c.pb_hw)+' mm</b>')
+    +CL('Shear area: A<sub>v</sub> = t<sub>w</sub>&times;h<sub>w</sub>',pb[3]+'&times;'+d(c.pb_hw),'<b>'+c.pb_Av.toFixed(0)+' mm&sup2;</b>')
+    +CL('V<sub>Rd</sub> = A<sub>v</sub>&times;f<sub>y</sub>/(&radic;3&times;&gamma;<sub>M0</sub>&times;1000)',c.pb_Av.toFixed(0)+'&times;'+p.fy+'/(1.732&times;'+p.gM0+'&times;1000)','<b>'+d(c.pb_VRd)+' kN</b>'),
+    OB('V<sub>Rd</sub> =',d(c.pb_VRd),'kN')));
+  H.push(CHKROW('Shear: V<sub>Ed</sub> &lt; V<sub>Rd</sub>',c.pb_Ved<c.pb_VRd,c.pb_Ved,c.pb_VRd,'kN'));
+  H.push(SUBROW('5.3 Web Buckling (EC3 Table 5.2)'));
+  H.push(ROW('&epsilon; = &radic;(235/f<sub>y</sub>)<br>= '+d(c.eps,3),
+    CL('Slenderness: h<sub>w</sub>/t<sub>w</sub>',d(c.pb_hw)+'/'+pb[3],d(c.pb_lam,1))
+    +CL('Limit: 67&epsilon; = 67&times;'+d(c.eps,3),'','<b>'+d(c.pb_lim,1)+'</b>'),
+    OB('h<sub>w</sub>/t<sub>w</sub> =',d(c.pb_lam,1),'')+OB('Limit =',d(c.pb_lim,1),'')));
+  H.push(CHKROW('Web buckling: h<sub>w</sub>/t<sub>w</sub> &lt; 67&epsilon;',c.pb_lam<c.pb_lim,c.pb_lam,c.pb_lim,'',1));
+  H.push(SUBROW('5.4 Web Bearing (EC3 §6.2, crippling check)'));
+  H.push(ROW('b<sub>1</sub> = 100 mm<br>(assumed)',
+    CL('Load spread: n<sub>1</sub> = 2.5(t<sub>f</sub>+r)','2.5('+pb[4]+'+'+pb[5]+')',d(c.pb_n1)+' mm')
+    +CL('Effective bearing: b<sub>eff</sub> = b<sub>1</sub>+n<sub>1</sub>','100+'+d(c.pb_n1),d(c.pb_beff)+' mm')
+    +CL('F<sub>Rd</sub> = b<sub>eff</sub>&times;t<sub>w</sub>&times;f<sub>y</sub>/1000',d(c.pb_beff)+'&times;'+pb[3]+'&times;'+p.fy+'/1000','<b>'+d(c.pb_FRd)+' kN</b>'),
+    OB('F<sub>Rd</sub> =',d(c.pb_FRd),'kN')));
+  H.push(CHKROW('Web bearing: V<sub>Ed</sub> &lt; F<sub>Rd</sub>',c.pb_Ved<c.pb_FRd,c.pb_Ved,c.pb_FRd,'kN'));
+  H.push(SUBROW('5.5 Primary Beam Deflection Check (Serviceability — L/360)'));
+  H.push(ROW('I<sub>xx</sub>='+pb[UBk.Ixx]+' cm⁴<br>Service load<br>= G<sub>k</sub>/2/span',
+    CL('Service UDL: w<sub>ser</sub>=G<sub>k</sub>/(2×span)',d(c.Gk,1)+'/(2×'+p.pb_span+')','<b>'+d(c.pb_w_ser)+' kN/m</b>')
+    +CL('δ=5wL⁴/(384EI)','I='+pb[UBk.Ixx]+' cm⁴; E=210,000 MPa','<b>'+d(c.pb_del)+' mm</b>')
+    +CL('Limit L/360='+p.pb_span+'×1000/360','','<b>'+d(c.pb_dlim,1)+' mm</b>'),
+    OB('δ=',d(c.pb_del),'mm')+OB('Limit=',d(c.pb_dlim,1),'mm')));
+  H.push(CHKROW('Primary beam deflection: δ < L/360',c.pb_def_ok,c.pb_del,c.pb_dlim,'mm'));
+
+  // ─── 6. SECONDARY BEAMS ─────────────────────────────────────
+  H.push(SECROW('6. DESIGN OF SECONDARY BEAMS (EC3 EN 1993-1-1 §6.2)'));
+  H.push(SELROW('sb',UB,PROPROW_UB,c.sb_ok,'EC3 §6.2<br>§6.2.8<br><br>Steel Tables<br>UK UB Sections'));
+  H.push(ROW('',
+    '<span class="CL i1">Span = '+inp('sb_span','is',0.1,1)+' m &nbsp;&nbsp; Beam spacing s = '+inp('sb_sp','is',0.05,0.3)+' m</span>'
+    +CL('Plan load intensity: q = N<sub>Ed</sub>/(L&times;W)',d(c.NEd,1)+'/('+p.L+'&times;'+p.W+')',d(c.NEd/(p.L*p.W))+' kN/m&sup2;')
+    +CL('UDL per beam: w = q&times;s',d(c.NEd/(p.L*p.W))+'&times;'+p.sb_sp,'<b>'+d(c.sb_w)+' kN/m</b>')
+    +CL('M<sub>Ed</sub> = wL&sup2;/8',d(c.sb_w)+'&times;'+p.sb_span+'&sup2;/8','<b>'+d(c.sb_Med)+' kNm</b>')
+    +CL('V<sub>Ed</sub> = wL/2',d(c.sb_w)+'&times;'+p.sb_span+'/2','<b>'+d(c.sb_Ved)+' kN</b>'),
+    OB('M<sub>Ed</sub> =',d(c.sb_Med),'kNm')+OB('V<sub>Ed</sub> =',d(c.sb_Ved),'kN')));
+  H.push(ROW('',
+    CL('M<sub>Rd</sub> = W<sub>pl</sub>&times;f<sub>y</sub>/&gamma;<sub>M0</sub>',sb[8]+'&times;10&sup3;&times;'+p.fy+'/'+p.gM0+'/10&sup6;','<b>'+d(c.sb_MRd)+' kNm</b>')
+    +CL('h<sub>w</sub> = h&minus;2t<sub>f</sub>',sb[1]+'-2&times;'+sb[4],d(c.sb_hw)+' mm')
+    +CL('A<sub>v</sub> = t<sub>w</sub>&times;h<sub>w</sub>',sb[3]+'&times;'+d(c.sb_hw),c.sb_Av.toFixed(0)+' mm&sup2;')
+    +CL('V<sub>Rd</sub> = A<sub>v</sub>&times;f<sub>y</sub>/(1.732&times;&gamma;<sub>M0</sub>&times;1000)','','<b>'+d(c.sb_VRd)+' kN</b>'),
+    OB('M<sub>Rd</sub> =',d(c.sb_MRd),'kNm')+OB('V<sub>Rd</sub> =',d(c.sb_VRd),'kN')));
+  H.push(CHKROW('Bending: M<sub>Ed</sub> &lt; M<sub>Rd</sub>',c.sb_Med<c.sb_MRd,c.sb_Med,c.sb_MRd,'kNm'));
+  H.push(CHKROW('Shear: V<sub>Ed</sub> &lt; V<sub>Rd</sub>',c.sb_Ved<c.sb_VRd,c.sb_Ved,c.sb_VRd,'kN'));
+  H.push(ROW('EC3 §6.2.8',
+    CL('Shear ratio: V<sub>Ed</sub>/V<sub>Rd</sub> = '+d(c.sb_Ved)+'/'+d(c.sb_VRd),'','<b>'+d(c.sb_rat,3)+'</b>')
+    +CL(c.sb_rat>0.5?'M<sub>Rd,red</sub> = (1&minus;(2V/V<sub>Rd</sub>&minus;1)&sup2;)&times;M<sub>Rd</sub>':'V/V<sub>Rd</sub> &le; 0.5 &rarr; M<sub>Rd,red</sub> = M<sub>Rd</sub>','','<b>'+d(c.sb_MRr)+' kNm</b>'),
+    OB('M<sub>Rd,red</sub> =',d(c.sb_MRr),'kNm')));
+  H.push(CHKROW('M/V interaction: M<sub>Ed</sub> &lt; M<sub>Rd,red</sub>',c.sb_Med<c.sb_MRr,c.sb_Med,c.sb_MRr,'kNm'));
+  H.push(SUBROW('6.1 Deflection Check (Serviceability)'));
+  H.push(ROW('Limit = L/250<br>I<sub>xx</sub> = '+sb[7]+' cm&sup4;',
+    CL('Service UDL: w<sub>ser</sub> = w/&gamma;<sub>G</sub>',d(c.sb_w)+'/'+p.gG,'<b>'+d(c.sb_ws)+' kN/m</b>')
+    +CL('&delta; = 5w<sub>ser</sub>L&sup4;/(384EI)','E=210000 N/mm&sup2;; I='+sb[7]+'cm&sup4;','<b>'+d(c.sb_del)+' mm</b>')
+    +CL('Limit = L/250 = '+p.sb_span+'&times;1000/250','','<b>'+d(c.sb_dlim,1)+' mm</b>'),
+    OB('&delta; =',d(c.sb_del),'mm')+OB('Limit =',d(c.sb_dlim,1),'mm')));
+  H.push(CHKROW('Deflection: &delta; &lt; L/250',c.sb_del<c.sb_dlim,c.sb_del,c.sb_dlim,'mm'));
+
+  // ─── 7. COLUMNS ─────────────────────────────────────────────
+  H.push(SECROW('7. DESIGN OF UNIVERSAL COLUMNS (EC3 EN 1993-1-1 §6.3)'));
+  H.push(SELROW('uc',UC,PROPROW_UC,c.uc_ok,'EC3 §6.3<br>Table 6.2<br>Curve b<br>&alpha;=0.34<br><br>Steel Tables<br>UK UC Sections'));
+  H.push(ROW('',
+    '<span class="CL i1">Tower height H<sub>t</sub> = <b>'+d(p.Ht)+' m</b> &nbsp;&nbsp; Braced at every <b>'+p.bl+'</b> levels &nbsp;&nbsp; <span style="font-size:9px;color:#888">(edit in Section 2.3)</span></span>'
+    +CL('Effective column length: L<sub>eff</sub> = H<sub>t</sub>/levels',p.Ht+'/'+p.bl,'<b>'+d(c.Leff/1000)+' m</b>'),
+    ''));
+  H.push(SUBROW('7.1 Cross-section Crushing Resistance (EC3 §6.2.4)'));
+  H.push(ROW('A = '+c.Amm2+' mm&sup2;<br>('+uc[6]+' cm&sup2;)',
+    CL('N<sub>pl,Rd</sub> = A&times;f<sub>y</sub>/&gamma;<sub>M0</sub>',c.Amm2+'&times;'+p.fy+'/'+p.gM0+'/1000','<b>'+d(c.Npl)+' kN</b>'),
+    OB('N<sub>pl,Rd</sub> =',d(c.Npl),'kN')));
+  H.push(CHKROW('Crushing: N<sub>Ed</sub> &lt; N<sub>pl,Rd</sub>',c.NEc<c.Npl,c.NEc,c.Npl,'kN'));
+  H.push(SUBROW('7.2 Flexural Buckling Resistance (EC3 §6.3.1 — Curve b, &alpha; = 0.34)'));
+  H.push(ROW('r<sub>yy</sub> = '+uc[10]+' mm',
+    CL('Slenderness: &lambda; = L<sub>eff</sub>/r<sub>yy</sub>',c.Leff.toFixed(0)+'/'+uc[10],d(c.lam,1))
+    +CL('Reference slenderness: &lambda;<sub>1</sub> = &pi;&radic;(E/f<sub>y</sub>)','&pi;&radic;(210000/'+p.fy+')',d(c.lam1,1))
+    +CL('Non-dimensional slenderness: &lambda;&macr; = &lambda;/&lambda;<sub>1</sub>',d(c.lam,1)+'/'+d(c.lam1,1),'<b>'+d(c.lamr,3)+'</b>')
+    +CL('&phi; = 0.5[1+&alpha;(&lambda;&macr;&minus;0.2)+&lambda;&macr;&sup2;]','&alpha;=0.34','<b>'+d(c.phi_,3)+'</b>')
+    +CL('&chi; = 1/[&phi;+&radic;(&phi;&sup2;&minus;&lambda;&macr;&sup2;)]','','<b>'+d(c.chi,3)+'</b>')
+    +CL('N<sub>b,Rd</sub> = &chi;&times;N<sub>pl,Rd</sub>',d(c.chi,3)+'&times;'+d(c.Npl),'<b>'+d(c.NbRd)+' kN</b>'),
+    OB('&chi; =',d(c.chi,3),'')+OB('N<sub>b,Rd</sub> =',d(c.NbRd),'kN')));
+  H.push(CHKROW('Flexural buckling: N<sub>Ed</sub> &lt; N<sub>b,Rd</sub>',c.NEc<c.NbRd,c.NEc,c.NbRd,'kN'));
+  H.push(SUBROW('7.3 Wind Moment Check &amp; Combined N+M Interaction (EC3 §6.3.3)'));
+  H.push(ROW('W<sub>pl</sub> = '+uc[9]+' cm&sup3;',
+    CL('Moment capacity: M<sub>Rd</sub> = W<sub>pl</sub>&times;f<sub>y</sub>/&gamma;<sub>M0</sub>',uc[9]+'&times;10&sup3;&times;'+p.fy+'/'+p.gM0+'/10&sup6;','<b>'+d(c.uc_MRd)+' kNm</b>')
+    +CL('Wind moment per column: M<sub>col</sub> = M<sub>w</sub>/'+p.nc,d(c.Mw,1)+'/'+p.nc,'<b>'+d(c.Mcol)+' kNm</b>'),
+    OB('M<sub>Rd</sub> =',d(c.uc_MRd),'kNm')));
+  H.push(CHKROW('Wind moment: M<sub>col</sub> &lt; M<sub>Rd</sub>',c.Mcol<c.uc_MRd,c.Mcol,c.uc_MRd,'kNm'));
+  H.push(ROW('EC3 §6.3.3',
+    CL('N<sub>Ed</sub>/N<sub>b,Rd</sub> + M<sub>col</sub>/M<sub>Rd</sub>',
+      d(c.NEc)+'/'+d(c.NbRd)+' + '+d(c.Mcol)+'/'+d(c.uc_MRd),
+      d(c.NEc/c.NbRd,3)+' + '+d(c.Mcol/c.uc_MRd,3)+' = <b>'+d(c.iact,3)+'</b>'),
+    OB('Interaction =',d(c.iact,3),'')));
+  H.push(CHKROW('N+M interaction &lt; 1.0 (EC3 §6.3.3)',c.iact<1.0,c.iact,1.0,''));
+
+  // ─── 8. BRACING ─────────────────────────────────────────────
+  H.push(SECROW('8. BRACING FORCE DESIGN (EC3 EN 1993-1-1 §6.2)'));
+  H.push(SELROW('br',ANG,function(s){return PROPROW_ANG(s,p.fy);},c.br_ok,'EC3 §6.2<br>X-bracing<br>&theta; = 45&deg;<br><br>Steel Tables<br>UK Angles'));
+  H.push(ROW('Triangular wind<br>distribution:<br>Bottom 50%<br>Middle 30%<br>Top 20%',
+    '<span class="CL BD">Wind distribution per bracing panel:</span>'
+    +CL('Bottom: F<sub>1</sub> = 0.50&times;F<sub>w</sub>','0.50&times;'+d(c.Fw,1),'<b>'+d(c.Fw*0.5)+' kN</b>')
+    +CL('Middle: F<sub>2</sub> = 0.30&times;F<sub>w</sub>','0.30&times;'+d(c.Fw,1),'<b>'+d(c.Fw*0.3)+' kN</b>')
+    +CL('Top:    F<sub>3</sub> = 0.20&times;F<sub>w</sub>','0.20&times;'+d(c.Fw,1),'<b>'+d(c.Fw*0.2)+' kN</b>')
+    +'<span class="CL BD" style="margin-top:4px">Tension force in brace at &theta;=45&deg;: T = V/(2sin&theta;)</span>'
+    +CL('Critical (bottom): T<sub>1</sub> = '+d(c.Fw*0.5)+'/(2&times;0.707)','','<b>'+d(c.T1)+' kN</b>')
+    +CL('Design force: T<sub>des</sub> = 1.5&times;T<sub>1</sub>','1.5&times;'+d(c.T1),'<b>'+d(c.Tdes)+' kN</b>'),
+    OB('T<sub>des</sub> =',d(c.Tdes),'kN')));
+  H.push(ROW('A = '+(br[1]*100).toFixed(0)+' mm&sup2;',
+    CL('Tension capacity: P<sub>t</sub> = A&times;f<sub>y</sub>/1000',(br[1]*100).toFixed(0)+'&times;'+p.fy+'/1000','<b>'+d(c.br_Pt)+' kN</b>'),
+    OB('P<sub>t</sub> =',d(c.br_Pt),'kN')));
+  H.push(CHKROW('Bracing tension: T<sub>des</sub> &lt; P<sub>t</sub>',c.br_ok,c.Tdes,c.br_Pt,'kN'));
+
+  // ─── 9. BASE PLATE ───────────────────────────────────────────
+  var blt=BOLT[SEL.bolt];
+  H.push(SECROW('9. BASE PLATE AND ANCHOR BOLT DESIGN'));
+  H.push(ROW('300&times;300 mm<br>base plate<br>adopted<br>A = 90,000 mm&sup2;',
+    '<span class="CL BD">Base plate bearing stress:</span>'
+    +CL('&sigma; = N<sub>Ed</sub> / A<sub>plate</sub>',d(c.NEc)+'&times;1000 / (300&times;300)','<b>'+d(c.bp_sig,3)+' MPa</b>')
+    +CL('Allowable: 0.6&times;f<sub>y</sub>','0.6&times;'+p.fy,'<b>'+d(0.6*p.fy)+' MPa</b>'),
+    OB('&sigma; =',d(c.bp_sig,2),'MPa')));
+  H.push(CHKROW('Bearing stress: &sigma; &lt; 0.6f<sub>y</sub>',c.bp_sig<0.6*p.fy,c.bp_sig,0.6*p.fy,'MPa'));
+  H.push(SUBROW('9.1 Anchor Bolt Selection (EC3 EN 1993-1-8 &sect;3.6)'));
+  H.push(SELROW('bolt',BOLT,PROPROW_BOLT,c.bp_ok,'EC3 &sect;3.6.1<br>EN 1993-1-8<br><br>Holding-down<br>bolt selection'));
+  H.push(ROW('No. of bolts<br>per base plate: '+inp('nb','is',1,2)+'<br><br>Lever arm z:<br>'+inp('bz','im',10,50)+' mm',
+    '<span class="CL BD">Anchor bolt tension check (EC3 &sect;3.6.1):</span>'
+    +'<span class="CL i1">Number of bolts per column base: <b>'+p.nb+'</b></span>'
+    +'<span class="CL i1">Bolts on tension side (n<sub>t</sub> = n/2): <b>'+d(c.nb_tension,0)+'</b></span>'
+    +'<span class="CL i1">Bolt lever arm z = '+inp('bz','im',10,50)+' mm</span>'
+    +CL('T<sub>bolt</sub> = M<sub>col</sub> / (n<sub>t</sub> &times; z)',
+        d(c.Mcol)+'&times;10&sup6; / ('+d(c.nb_tension,0)+'&times;'+p.bz+')',
+        '<b>'+d(c.T_bolt)+' kN</b> per bolt')
+    +CL('F<sub>t,Rd</sub> = 0.9&times;f<sub>ub</sub>&times;A<sub>s</sub>/&gamma;<sub>M2</sub>',
+        '0.9&times;'+blt[3]+'&times;'+blt[2]+'/1.25/1000',
+        '<b>'+d(c.FtRd,1)+' kN</b>'),
+    OB('T<sub>bolt</sub> =',d(c.T_bolt),'kN')+OB('F<sub>t,Rd</sub> =',d(c.FtRd,1),'kN')));
+  H.push(CHKROW('Bolt tension: T<sub>bolt</sub> &lt; F<sub>t,Rd</sub>',c.T_bolt<c.FtRd,c.T_bolt,c.FtRd,'kN'));
+  H.push(ROW('',
+    '<span class="CL BD">Anchor bolt shear check (wind at base):</span>'
+    +CL('V<sub>bolt</sub> = F<sub>w</sub> / (n<sub>cols</sub> &times; n<sub>bolts</sub>)',
+        d(c.Fw,1)+' / ('+p.nc+'&times;'+p.nb+')',
+        '<b>'+d(c.V_bolt)+' kN</b> per bolt')
+    +CL('F<sub>v,Rd</sub> = &alpha;<sub>v</sub>&times;f<sub>ub</sub>&times;A<sub>s</sub>/&gamma;<sub>M2</sub>',
+        '&alpha;v='+( blt[4]==='10.9'?'0.5':'0.6')+'&times;'+blt[3]+'&times;'+blt[2]+'/1.25/1000',
+        '<b>'+d(c.FvRd,1)+' kN</b>'),
+    OB('V<sub>bolt</sub> =',d(c.V_bolt),'kN')+OB('F<sub>v,Rd</sub> =',d(c.FvRd,1),'kN')));
+  H.push(CHKROW('Bolt shear: V<sub>bolt</sub> &lt; F<sub>v,Rd</sub>',c.V_bolt<c.FvRd,c.V_bolt,c.FvRd,'kN'));
+
+  // ─── 10. FOUNDATION ──────────────────────────────────────────
+  H.push(SECROW('10. RC PAD FOUNDATION — 1.5&times;1.5&times;0.45 m (EC2 EN 1992-1-1)'));
+  H.push(ROW('q<sub>a</sub> = '+inp('qa','im',10,50)+' kN/m&sup2;<br><i>Confirm by<br>site investigation</i>',
+    CL('Service axial load: N<sub>serv</sub> = N<sub>Ed</sub>/&gamma;<sub>G</sub>',d(c.NEc)+'/'+p.gG,'<b>'+d(c.Ns)+' kN</b>')
+    +CL('Eccentricity: e = M<sub>col</sub>/N<sub>serv</sub>',d(c.Mcol)+'/'+d(c.Ns),'<b>'+d(c.ecc,3)+' m</b> = '+Math.round(c.ecc*1000)+' mm')
+    +CL('Required area: A = N<sub>Ed</sub>/q<sub>a</sub>',d(c.NEc)+'/'+p.qa,'<b>'+d(c.NEc/p.qa,3)+' m&sup2;</b>')
+    +'<span class="CL i2 BD">&rarr; Adopt 1.5&times;1.5&times;0.45 m (A = 2.25 m&sup2;)</span>',
+    OB('e =',Math.round(c.ecc*1000),'mm')));
+  H.push(ROW('',
+    CL('Average bearing: q<sub>avg</sub> = N<sub>serv</sub>/A',d(c.Ns)+'/2.25','<b>'+d(c.qavg)+' kN/m&sup2;</b>')
+    +CL('6e/B = 6&times;'+d(c.ecc,3)+'/1.5','',d(6*c.ecc/1.5,3))
+    +CL('Maximum: q<sub>max</sub> = q<sub>avg</sub>(1+6e/B)',d(c.qavg)+'&times;(1+'+d(6*c.ecc/1.5,3)+')',d(c.qmax)+' kN/m&sup2;'),
+    OB('q<sub>max</sub> =',d(c.qmax),'kN/m&sup2;')));
+  H.push(CHKROW('Bearing: q<sub>max</sub> &lt; q<sub>a</sub>',c.qmax<p.qa,c.qmax,p.qa,'kN/m&sup2;'));
+  // Weak soil warning / ground beam toggle
+  var soilWeak=p.qa<p.qa_warn;
+  H.push(ROW('',
+    '<div style="background:'+(soilWeak?'#FFF3E0':'#E8F5E9')+';border-left:3px solid '+(soilWeak?'#EF6C00':'#43A047')+';padding:8px 12px;margin:4px 0;border-radius:2px">'
+    +'<div style="font-weight:bold;font-size:11px;color:'+(soilWeak?'#BF360C':'#1B5E20')+';margin-bottom:4px">'
+    +(soilWeak?'&#9888; Soil bearing capacity is LOW (q<sub>a</sub> = '+d(p.qa,0)+' kN/m&sup2; &lt; '+d(p.qa_warn,0)+' kN/m&sup2;) — Ground Beams Recommended'
+              :'&#10003; Soil bearing capacity is adequate — Ground beams not required')+'</div>'
+    +'<div style="font-size:10px;color:#555;margin-bottom:6px">'
+    +(soilWeak?'Isolated pad footings should be connected with RC ground beams (tie beams) to prevent differential settlement, redistribute horizontal forces and provide restraint between column bases.'
+              :'Isolated pad footings are sufficient. Enable ground beam design below if required by site conditions.')+'</div>'
+    +'<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">'
+    +'<label style="display:flex;align-items:center;gap:5px;font-size:11px;cursor:pointer">'
+    +'<input type="checkbox" id="gb_toggle" '+(P.gb_on?'checked':'')+' onchange="P.gb_on=this.checked;render()" style="width:14px;height:14px"> '
+    +'<strong>Include Ground Beam Design (Section 11)</strong></label>'
+    +'<span style="font-size:10px;color:#777">Auto-activate threshold: q<sub>a</sub> &lt; '+inp('qa_warn','is',10,50)+' kN/m&sup2;</span>'
+    +'</div></div>',''));
+  H.push(SUBROW('10.1 Bending Reinforcement Design (EC2 §9.2.1)'));
+  H.push(ROW('f<sub>ck</sub>='+inp('fck','is',5,20)+' MPa<br>f<sub>yr</sub>='+inp('fyr','is',10,400)+' MPa<br>Cover=75 mm<br>C'+p.fck+'/30',
+    CL('d = 450&minus;75','',c.dfnd+' mm &nbsp;&nbsp; z = 0.95d = '+c.zfnd.toFixed(0)+' mm')
+    +CL('M = q<sub>avg</sub>&times;B&sup2;/8',d(c.qavg)+'&times;1.5&sup2;/8','<b>'+d(c.Mfnd)+' kNm</b>')
+    +CL('A<sub>s,req</sub> = M/(0.87&times;f<sub>yr</sub>&times;z)',d(c.Mfnd)+'&times;10&sup6;/(0.87&times;'+p.fyr+'&times;'+c.zfnd.toFixed(0)+')',d(c.Asreq,0)+' mm&sup2;/m')
+    +CL('A<sub>s,min</sub> = 0.13%&times;b&times;d','0.0013&times;1000&times;'+c.dfnd,d(c.Asmin,0)+' mm&sup2;/m')
+    +'<span class="CL i1">Governing: <b>'+d(mx(c.Asreq,c.Asmin),0)+' mm&sup2;/m</b></span>'
+    +'<span class="CL i1">Provide T12 @ 150 mm c/c: A<sub>s,prov</sub> = (1000/150)&times;113 = <b>753 mm&sup2;/m</b></span>',
+    OB('A<sub>prov</sub> =','753','mm&sup2;/m')));
+  H.push(CHKROW('Steel: A<sub>s,prov</sub> &gt; max(A<sub>s,req</sub>, A<sub>s,min</sub>)',
+    c.Asprov>mx(c.Asreq,c.Asmin), mx(c.Asreq,c.Asmin), c.Asprov,'mm&sup2;/m',0));
+  H.push(SUBROW('10.2 Punching Shear Check (EC2 §6.4)'));
+  H.push(ROW('k = '+d(c.kp,3)+'<br>&rho; = '+(c.rho_l*100).toFixed(3)+'%',
+    CL('Control perimeter: u<sub>1</sub> = 2(c+4d)','2('+d(uc[1])+'+4&times;'+c.dfnd+')',c.uperim.toFixed(0)+' mm')
+    +CL('Area inside perimeter: A<sub>in</sub> = (c+2d)&sup2;','(('+d(uc[1])+'+2&times;'+c.dfnd+')/1000)&sup2;',d(c.Ain,4)+' m&sup2;')
+    +CL('Upward soil: V<sub>soil</sub> = q<sub>avg</sub>&times;A<sub>in</sub>',d(c.qavg)+'&times;'+d(c.Ain,3),d(c.Vsoil)+' kN')
+    +CL('Net punching: V<sub>Ed</sub> = N<sub>serv</sub>&minus;V<sub>soil</sub>',d(c.Ns)+'&minus;'+d(c.Vsoil),'<b>'+d(c.VEdp)+' kN</b>')
+    +CL('Punching stress: v<sub>Ed</sub> = V<sub>Ed</sub>/(u<sub>1</sub>&times;d)',d(c.VEdp)+'&times;1000/('+c.uperim.toFixed(0)+'&times;'+c.dfnd+')',d(c.vEd,4)+' N/mm&sup2;')
+    +CL('v<sub>Rd,c</sub> = (0.18/&gamma;<sub>M0</sub>)&times;k&times;(100&rho;f<sub>ck</sub>)<sup>1/3</sup>','k='+d(c.kp,3)+'; &rho;='+d(c.rho_l,5),d(c.vRdc,4)+' N/mm&sup2;'),
+    OB('v<sub>Ed</sub> =',d(c.vEd,4),'N/mm&sup2;')+OB('v<sub>Rd,c</sub> =',d(c.vRdc,4),'N/mm&sup2;')));
+  H.push(CHKROW('Punching shear: v<sub>Ed</sub> &lt; v<sub>Rd,c</sub>',c.vEd<c.vRdc,c.vEd,c.vRdc,'N/mm&sup2;',4));
+  H.push(SUBROW('10.3 Foundation Sliding Check (EC7 §6.5)'));
+  H.push(ROW('μ = '+inp('mu_slide','is',0.05,0.1)+'<br>Concrete on<br>granular soil<br>(0.35–0.50)',
+    CL('ULS horizontal demand: H<sub>d</sub>=γ<sub>Q</sub>×F<sub>w</sub>',p.gQ+'×'+d(c.Fw,1),'<b>'+d(c.F_slide,1)+' kN</b>')
+    +CL('Total service vertical: N<sub>tot</sub>=n<sub>c</sub>×N<sub>serv</sub>',p.nc+'×'+d(c.Ns,1),'<b>'+d(c.N_serv_tot,1)+' kN</b>')
+    +CL('Sliding resistance: R<sub>d</sub>=μ×N<sub>tot</sub>',p.mu_slide+'×'+d(c.N_serv_tot,1),'<b>'+d(c.R_slide,1)+' kN</b>'),
+    OB('H<sub>d</sub>=',d(c.F_slide,1),'kN')+OB('R<sub>d</sub>=',d(c.R_slide,1),'kN')));
+  H.push(CHKROW('Sliding: H<sub>d</sub> < μ×N<sub>tot</sub>',c.slide_ok,c.F_slide,c.R_slide,'kN'));
+
+  // ─── 11. GROUND BEAM ────────────────────────────────────────────
+  if(c.gb_show){
+    var gp=P; // P alias
+    H.push(SECROW('11. RC GROUND BEAM DESIGN — TIE BEAMS BETWEEN COLUMN PADS (EC2 EN 1992-1-1)'));
+    H.push(ROW('EC2 §9.2<br>EC8 §4.3<br><br>Good practice:<br>Tie force&nbsp;=<br>5% column<br>axial load',
+      '<div class="note" style="border-left-color:#1565C0;background:#E3F2FD;color:#0D47A1;margin-bottom:6px">'
+      +'<b>Purpose of ground beams:</b> Connect isolated pad footings to prevent differential settlement, '
+      +'redistribute lateral (wind) forces between column bases, and provide rotational restraint. '
+      +'Required when soil is weak, eccentric loading is high, or structural robustness demands continuity at foundation level.</div>'
+      +'<span class="CL BD">Ground beam geometry:</span>'
+      +'<span class="CL i1">Width b = '+inp('gb_b','im',25,150)+' mm &nbsp;&nbsp; Depth h = '+inp('gb_h','im',25,200)+' mm &nbsp;&nbsp; Cover c = '+inp('gb_cover','is',5,30)+' mm</span>'
+      +'<span class="CL i1">Link diameter &phi;<sub>link</sub> = '+inp('gb_link','is',2,6)+' mm &nbsp;&nbsp; Main bar &phi; = '+inp('gb_phi','is',2,8)+' mm</span>'
+      +CL('Effective depth: d = h &minus; cover &minus; &phi;<sub>link</sub> &minus; &phi;/2',
+          gp.gb_h+'&minus;'+gp.gb_cover+'&minus;'+gp.gb_link+'&minus;'+Math.round(gp.gb_phi/2),
+          '<b>'+c.gb_d+' mm</b>')
+      +CL('Lever arm: z = min(0.95d, d&minus;25)','','<b>'+d(c.gb_z,0)+' mm</b>')
+      +'<span class="CL BD" style="margin-top:5px">Column spacing (beam spans):</span>'
+      +CL('Long direction span: L<sub>1</sub> = L','',d(c.L_long)+' m')
+      +CL('Short direction span: L<sub>2</sub> = W','',d(c.L_short)+' m')
+      +CL('Critical (longest) span: L<sub>crit</sub>','',d(c.L_crit)+' m'),
+      ''));
+    H.push(SUBROW('11.1 Load Calculation'));
+    H.push(ROW('UDL sign:<br>+ = down<br>&minus; = up<br><br>Net used<br>for design',
+      CL('Self-weight: w<sub>sw</sub> = 25&times;b&times;h',
+          '25&times;'+(gp.gb_b/1000)+'&times;'+(gp.gb_h/1000), d(c.gb_wsw)+' kN/m')
+      +CL('Upward soil pressure: w<sub>soil</sub> = q<sub>avg</sub>&times;b',
+          d(c.qavg)+'&times;'+(gp.gb_b/1000), d(c.gb_wsoil)+' kN/m')
+      +CL('Net ULS UDL: w<sub>net</sub> = &gamma;<sub>G</sub>&times;w<sub>sw</sub> &minus; 1.0&times;w<sub>soil</sub>',
+          gp.gG+'&times;'+d(c.gb_wsw)+'&minus;1.0&times;'+d(c.gb_wsoil), '<b>'+d(c.gb_wnet)+' kN/m</b>')
+      +'<span class="CL" style="margin-top:4px"><b>Tie force (5% of column axial — EC8 good practice):</b></span>'
+      +CL('T<sub>tie</sub> = 0.05 &times; N<sub>Ed</sub>/column',
+          '0.05&times;'+d(c.NEc),  '<b>'+d(c.T_tie)+' kN</b> (tension or compression)'),
+      OB('w<sub>net</sub>=',d(c.gb_wnet),'kN/m')+OB('T<sub>tie</sub>=',d(c.T_tie),'kN')));
+    H.push(ROW('Simply<br>supported<br>beam model',
+      CL('Design moment: M<sub>Ed</sub> = |w<sub>net</sub>|&times;L<sub>crit</sub>&sup2;/8',
+          d(Math.abs(c.gb_wnet))+'&times;'+d(c.L_crit)+'&sup2;/8', '<b>'+d(c.gb_Med)+' kNm</b>')
+      +CL('Design shear: V<sub>Ed</sub> = |w<sub>net</sub>|&times;L<sub>crit</sub>/2',
+          d(Math.abs(c.gb_wnet))+'&times;'+d(c.L_crit)+'/2', '<b>'+d(c.gb_Ved)+' kN</b>'),
+      OB('M<sub>Ed</sub>=',d(c.gb_Med),'kNm')+OB('V<sub>Ed</sub>=',d(c.gb_Ved),'kN')));
+    H.push(SUBROW('11.2 Flexural Reinforcement (EC2 §9.2.1)'));
+    H.push(ROW('f<sub>yr</sub>='+d(p.fyr,0)+' MPa<br>f<sub>ck</sub>='+d(gp.gb_fck,0)+' MPa<br>f<sub>ctm</sub>='+d(c.fctm,2)+' MPa',
+      CL('A<sub>s,bend</sub> = M<sub>Ed</sub>/(0.87&times;f<sub>yr</sub>&times;z)',
+          d(c.gb_Med)+'&times;10&sup6;/(0.87&times;'+p.fyr+'&times;'+d(c.gb_z,0)+')', d(c.As_bend_gb,0)+' mm&sup2;')
+      +CL('A<sub>s,tie</sub> = T<sub>tie</sub>/(0.87&times;f<sub>yr</sub>)',
+          d(c.T_tie)+'&times;1000/(0.87&times;'+p.fyr+')', d(c.As_tie_gb,0)+' mm&sup2;')
+      +CL('A<sub>s,min</sub> = max(0.26&times;f<sub>ctm</sub>/f<sub>yr</sub>&times;b&times;d, 0.0013&times;b&times;d)',
+          'max(0.26&times;'+d(c.fctm,2)+'/'+p.fyr+'&times;'+gp.gb_b+'&times;'+c.gb_d+', 0.0013&times;'+gp.gb_b+'&times;'+c.gb_d+')',
+          d(c.As_min_gb,0)+' mm&sup2;')
+      +'<span class="CL i1">A<sub>s,req</sub> = max(A<sub>s,bend</sub>+A<sub>s,tie</sub>, A<sub>s,min</sub>) = <b>'+d(c.As_req_gb,0)+' mm&sup2;</b></span>'
+      +'<span class="CL" style="margin-top:4px"><b>Provide: '+c.n_bars+' T'+gp.gb_phi+' bars (bottom, each span)</b></span>'
+      +CL('A<sub>s,prov</sub> = '+c.n_bars+'&times;&pi;&times;('+gp.gb_phi+'/2)&sup2;',
+          c.n_bars+'&times;'+d(c.bar_area,0), '<b>'+d(c.As_prov_gb,0)+' mm&sup2;</b>'),
+      OB('A<sub>s,req</sub>=',d(c.As_req_gb,0),'mm&sup2;')+OB('A<sub>prov</sub>=',d(c.As_prov_gb,0),'mm&sup2;')));
+    H.push(CHKROW('Bending: A<sub>s,prov</sub> &ge; A<sub>s,req</sub>',c.gb_bend_ok,c.As_req_gb,c.As_prov_gb,'mm&sup2;',0));
+    H.push(SUBROW('11.3 Shear Check (EC2 §6.2)'));
+    H.push(ROW('k='+d(c.k_gb,3)+'<br>&rho;='+d(c.rho_gb*100,3)+'%',
+      CL('Shear stress: v<sub>Ed</sub>=V<sub>Ed</sub>/(b&times;d)',
+          d(c.gb_Ved)+'&times;1000/('+gp.gb_b+'&times;'+c.gb_d+')', d(c.vEd_gb,4)+' N/mm&sup2;')
+      +CL('Shear resistance: v<sub>Rd,c</sub>=(0.18/&gamma;<sub>M0</sub>)&times;k&times;(100&rho;f<sub>ck</sub>)<sup>1/3</sup>',
+          'k='+d(c.k_gb,3)+' &rho;='+d(c.rho_gb,5), d(c.vRdc_gb,4)+' N/mm&sup2;')
+      +(c.gb_links_req
+        ? '<span class="CL i1" style="color:#C62828"><b>&#9888; Shear reinforcement required — provide T'+gp.gb_link+'@'+c.s_link_gb+' mm links</b></span>'
+        : '<span class="CL i1" style="color:#1B5E20"><b>&#10003; v<sub>Ed</sub> &lt; v<sub>Rd,c</sub> — minimum links only</b></span>'
+       )+'<span class="CL i1">Minimum links: T'+gp.gb_link+' @ 200 mm c/c (2 legs)</span>',
+      OB('v<sub>Ed</sub>=',d(c.vEd_gb,4),'N/mm&sup2;')+OB('v<sub>Rd,c</sub>=',d(c.vRdc_gb,4),'N/mm&sup2;')));
+    H.push(CHKROW('Shear: v<sub>Ed</sub> &lt; v<sub>Rd,c</sub>',c.vEd_gb<c.vRdc_gb,c.vEd_gb,c.vRdc_gb,'N/mm&sup2;',4));
+    H.push(SUBROW('11.4 Compression Strut Check (beam under reversed wind load)'));
+    H.push(ROW('Beam also acts<br>as strut under<br>reversed wind<br>direction<br><br>Limit: 0.4f<sub>ck</sub>',
+      CL('Average stress: &sigma; = T<sub>tie</sub>/(b&times;h)',
+          d(c.T_tie)+'&times;1000/('+gp.gb_b+'&times;'+gp.gb_h+')', d(c.sigma_strut,3)+' MPa')
+      +CL('Strut limit: 0.4&times;f<sub>ck</sub>','0.4&times;'+gp.gb_fck, d(c.sigma_strut_lim,1)+' MPa'),
+      OB('&sigma;=',d(c.sigma_strut,3),'MPa')+OB('Limit=',d(c.sigma_strut_lim,1),'MPa')));
+    H.push(CHKROW('Strut: &sigma; &lt; 0.4f<sub>ck</sub>',c.gb_strut_ok,c.sigma_strut,c.sigma_strut_lim,'MPa'));
+    H.push(SUBROW('11.5 Ground Beam Schedule'));
+    H.push(ROW('',
+      '<table style="font-size:10px;width:100%;border-collapse:collapse">'
+      +'<tr style="background:#1B3A6B;color:#fff">'
+      +'<th style="padding:4px 8px;text-align:left">Member</th><th style="padding:4px 8px">Size (b&times;h)</th>'
+      +'<th style="padding:4px 8px">Span</th><th style="padding:4px 8px">No.</th>'
+      +'<th style="padding:4px 8px">Bottom steel</th><th style="padding:4px 8px">Top steel (nominal)</th>'
+      +'<th style="padding:4px 8px">Links</th></tr>'
+      +'<tr style="background:#E8F5E9">'
+      +'<td style="padding:3px 8px"><b>Ground beam (long)</b></td>'
+      +'<td style="text-align:center;padding:3px 8px">'+gp.gb_b+'&times;'+gp.gb_h+' mm</td>'
+      +'<td style="text-align:center;padding:3px 8px">'+d(c.L_long)+' m</td>'
+      +'<td style="text-align:center;padding:3px 8px">2</td>'
+      +'<td style="text-align:center;padding:3px 8px"><b>'+c.n_bars+'T'+gp.gb_phi+'</b></td>'
+      +'<td style="text-align:center;padding:3px 8px">2T'+gp.gb_phi+' (nominal)</td>'
+      +'<td style="text-align:center;padding:3px 8px">T'+gp.gb_link+'@'+(c.gb_links_req?c.s_link_gb:200)+' mm</td></tr>'
+      +'<tr style="background:#E8F5E9">'
+      +'<td style="padding:3px 8px"><b>Ground beam (short)</b></td>'
+      +'<td style="text-align:center;padding:3px 8px">'+gp.gb_b+'&times;'+gp.gb_h+' mm</td>'
+      +'<td style="text-align:center;padding:3px 8px">'+d(c.L_short)+' m</td>'
+      +'<td style="text-align:center;padding:3px 8px">2</td>'
+      +'<td style="text-align:center;padding:3px 8px"><b>'+c.n_bars+'T'+gp.gb_phi+'</b></td>'
+      +'<td style="text-align:center;padding:3px 8px">2T'+gp.gb_phi+' (nominal)</td>'
+      +'<td style="text-align:center;padding:3px 8px">T'+gp.gb_link+'@'+(c.gb_links_req?c.s_link_gb:200)+' mm</td></tr>'
+      +'</table>'
+      +'<div class="note" style="margin-top:6px"><b>Construction notes:</b> Cast ground beams monolithically with pad footings. '
+      +'Top of beams at finished floor level. Provide starter bars lapping with pad reinforcement (min. 40&phi;). '
+      +'Use C'+gp.gb_fck+'/30 concrete. Maintain '+gp.gb_cover+' mm cover throughout. '
+      +'Kicker height 75 mm minimum for formwork seating.</div>',
+      ''));
+  }
+
+  // ─── SUMMARY ─────────────────────────────────────────────────
+  var ALL=[
+    ['Tank wall — membrane+bending',c.wall_ok,c.sigma_wtot,c.sig_lim,'N/mm²'],
+    ['Tank floor — plate bending',c.floor_ok,c.sigma_floor,c.sig_lim,'N/mm²'],
+    ['Primary beam — deflection',c.pb_def_ok,c.pb_del,c.pb_dlim,'mm'],
+    ['Foundation — sliding',c.slide_ok,c.F_slide,c.R_slide,'kN'],
+    ['Primary beam — bending',c.pb_Med<c.pb_MRd,c.pb_Med,c.pb_MRd,'kNm'],
+    ['Primary beam — shear',c.pb_Ved<c.pb_VRd,c.pb_Ved,c.pb_VRd,'kN'],
+    ['Primary beam — web buckling',c.pb_lam<c.pb_lim,c.pb_lam,c.pb_lim,''],
+    ['Primary beam — web bearing',c.pb_Ved<c.pb_FRd,c.pb_Ved,c.pb_FRd,'kN'],
+    ['Secondary beam — bending',c.sb_Med<c.sb_MRd,c.sb_Med,c.sb_MRd,'kNm'],
+    ['Secondary beam — shear',c.sb_Ved<c.sb_VRd,c.sb_Ved,c.sb_VRd,'kN'],
+    ['Secondary beam — M/V interaction',c.sb_Med<c.sb_MRr,c.sb_Med,c.sb_MRr,'kNm'],
+    ['Secondary beam — deflection',c.sb_del<c.sb_dlim,c.sb_del,c.sb_dlim,'mm'],
+    ['Column — crushing',c.NEc<c.Npl,c.NEc,c.Npl,'kN'],
+    ['Column — buckling',c.NEc<c.NbRd,c.NEc,c.NbRd,'kN'],
+    ['Column — N+M interaction',c.iact<1.0,c.iact,1.0,''],
+    ['Bracing — tension',c.br_ok,c.Tdes,c.br_Pt,'kN'],
+    ['Base plate — bearing stress',c.bp_sig<0.6*p.fy,c.bp_sig,0.6*p.fy,'MPa'],
+    ['Anchor bolt — tension',c.T_bolt<c.FtRd,c.T_bolt,c.FtRd,'kN'],
+    ['Anchor bolt — shear',c.V_bolt<c.FvRd,c.V_bolt,c.FvRd,'kN'],
+    ['Foundation — bearing pressure',c.qmax<p.qa,c.qmax,p.qa,'kN/m&sup2;'],
+    ['Foundation — reinforcement',c.Asprov>mx(c.Asreq,c.Asmin),mx(c.Asreq,c.Asmin),c.Asprov,'mm&sup2;/m'],
+    ['Foundation — punching shear',c.vEd<c.vRdc,c.vEd,c.vRdc,'N/mm²']
+  ].concat(c.uplift_exists?[
+    ['Anchor bolt — uplift (empty tank)',c.bolt_up_ok,c.T_bolt_up,c.FtRd,'kN']
+  ]:[]).concat(c.gb_show?[
+    ['Ground beam — bending',c.gb_bend_ok,c.As_req_gb,c.As_prov_gb,'mm²'],
+    ['Ground beam — shear',c.vEd_gb<c.vRdc_gb,c.vEd_gb,c.vRdc_gb,'N/mm²'],
+    ['Ground beam — strut',c.gb_strut_ok,c.sigma_strut,c.sigma_strut_lim,'MPa']
+  ]:[]);
+  var nP=ALL.filter(function(x){return x[1]}).length, nF=ALL.length-nP;
+  var compSec={'Primary beam':pb[0],'Secondary beam':sb[0],'Column':uc[0],'Bracing':br[0],'Base plate':'300×300×20 mm','Anchor bolt':BOLT[SEL.bolt][0],'Foundation':'1.5×1.5×0.45 m'};
+  var tbl='<table style="width:100%;border-collapse:collapse;font-size:10px">'
+    +'<tr style="background:#1B3A6B;color:#fff">'
+    +'<th style="padding:3px 8px;text-align:left">Check</th>'
+    +'<th style="padding:3px 6px;text-align:center">Demand</th>'
+    +'<th style="padding:3px 6px;text-align:center">Capacity</th>'
+    +'<th style="padding:3px 6px;text-align:center">Ratio</th>'
+    +'<th style="padding:3px 6px;text-align:center">Result</th>'
+    +'<th style="padding:3px 6px;text-align:center">Section used</th></tr>';
+  ALL.forEach(function(x){
+    var comp=x[0].split(' — ')[0], sec=compSec[comp]||'';
+    var r2=mn(x[2]/x[3],1.99), bg=x[1]?'#E8F5E9':'#FFEBEE', tc=x[1]?'#1B5E20':'#B71C1C';
+    tbl+='<tr style="background:'+bg+'">'
+      +'<td style="padding:2px 8px">'+x[0]+'</td>'
+      +'<td style="text-align:center;padding:2px 6px;font-family:Courier New">'+d(x[2],3)+'</td>'
+      +'<td style="text-align:center;padding:2px 6px;font-family:Courier New">'+d(x[3],3)+'</td>'
+      +'<td style="text-align:center;padding:2px 6px;font-family:Courier New">'+d(r2,2)+'</td>'
+      +'<td style="text-align:center;padding:2px 6px;color:'+tc+';font-weight:bold">'+(x[1]?'&#10003; PASS':'&#10007; FAIL')+'</td>'
+      +'<td style="text-align:center;padding:2px 6px;font-size:9px;color:#444">'+sec+'</td></tr>';
+  });
+  tbl+='</table>';
+  var seismic_note = c.seismic_governs?' | &#9888; SEISMIC GOVERNS OVER WIND':' | &#10003; Wind governs over seismic';
+  H.push(SECROW('DESIGN SUMMARY — '+nP+' of '+ALL.length+' Checks Passed'+(nF?' | '+nF+' FAILED — Use Auto-Fix buttons':'&#10003; All Clear')));
+  H.push('<tr><td class="REF"></td><td class="CALC">'
+    +'<div style="display:flex;gap:10px;margin-bottom:8px;flex-wrap:wrap">'
+    +'<span style="background:#E8F5E9;border:1px solid #388E3C;color:#1B5E20;font-weight:bold;padding:4px 14px;border-radius:3px">&#10003; '+nP+' / '+ALL.length+' Passed</span>'
+    +(nF?'<span style="background:#FFEBEE;border:1px solid #C62828;color:#B71C1C;font-weight:bold;padding:4px 14px;border-radius:3px">&#10007; '+nF+' Failed — scroll up to Auto-Fix buttons</span>':'')
+    +'</div>'+tbl+'</td><td class="OUT"></td></tr>');
+
+  document.getElementById('CB').innerHTML=H.join('');
+  var dt=document.getElementById('pdate'); if(dt&&!dt.value){var n=new Date();dt.value=n.toLocaleDateString('en-GB');}
+  syncCompany();
+  syncTitle();
+  var td2=document.getElementById('tp_date'); if(td2&&!td2.value){var n2=new Date();td2.value=n2.toLocaleDateString('en-GB');}
+  var td3=document.getElementById('tp_prep_d'); if(td3&&!td3.value){var n3=new Date();td3.value=n3.toLocaleDateString('en-GB');}
+}
+
+window.syncCompany=function(){
+  var co=(document.getElementById('co_name')||{}).value||'';
+  var a1=(document.getElementById('co_addr1')||{}).value||'';
+  var a2=(document.getElementById('co_addr2')||{}).value||'';
+  var tel=(document.getElementById('co_tel')||{}).value||'';
+  var email=(document.getElementById('co_email')||{}).value||'';
+  // Update calc sheet header
+  var el=document.getElementById('calc_co_name'); if(el) el.textContent=co||'';
+  // Build sub-line for calc header
+  var parts=[a1,a2].filter(Boolean).join(', ');
+  var el2=document.getElementById('calc_co_sub'); if(el2) el2.textContent=parts||'';
+};
+
+window.onProjChange=function(el){
+  var val=el.value||'';
+  // Mirror to all sibling project-name fields
+  ['tp_proj_inp','ptitle'].forEach(function(id){
+    var t=document.getElementById(id);
+    if(t&&t!==el) t.value=val;
+  });
+  var cn=document.getElementById('calc_proj_name'); if(cn) cn.textContent=val;
+};
+
+window.syncTitle=function(){
+  var proj=(document.getElementById('tp_proj_inp')||{}).value||'';
+  var el;
+  el=document.getElementById('calc_proj_name'); if(el) el.textContent=proj;
+  syncCompany();
+  el=document.getElementById('ptitle'); if(el&&el.value!==proj) el.value=proj;
+};
+
+window.addRevRow=function(){
+  var tb=document.getElementById('rev_body');
+  var tr=document.createElement('tr');
+  tr.innerHTML='<td class="rc"><input style="text-align:center;font-weight:bold"></td>'
+    +'<td class="rd"><input placeholder="DD/MM/YYYY"></td>'
+    +'<td><input style="width:100%"></td>'
+    +'<td class="ra"><input></td>'
+    +'<td class="ra"><input></td>'
+    +'<td class="ra"><input></td>';
+  tb.appendChild(tr);
+};
+
+window.onInputChange=function(el){
+  var k=el.dataset.key,v=parseFloat(el.value);
+  if(!isNaN(v)&&v>0) P[k]=v;
+  render();
+}
+
+render();
+</script>
+</body>
+</html>
